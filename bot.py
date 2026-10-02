@@ -17,21 +17,18 @@ def run_flask():
 
 threading.Thread(target=run_flask).start()
 
-API_TOKEN = "8591551561:AAG__1Pmpjx0HuYvEnR3K3mC_uaAS6ZTjm8"
+API_TOKEN = "8591551561:AAEu4CcuRJ_nUIKkXyXadus1wv_6QF9bUVI"
 bot = telebot.TeleBot(API_TOKEN)
 
 # Your Admin Telegram ID and UPI Details
 ADMIN_ID = 8380823727
 YOUR_UPI_ID = "orthodontist@airtel"
-
-# यहाँ आप अपने QR कोड का डायरेक्ट इमेज लिंक (Direct Image URL) या Telegram File ID डाल सकते हैं। 
-# अभी यहाँ एक स्टैंडर्ड UPI QR जनरेटर लिंक लगा दिया गया है ताकि यह ऑटोमैटिक काम करे!
 QR_CODE_URL = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=upi://pay?pa=orthodontist@airtel&pn=Ariful%20Islam%20Khan"
 
 # Global variable to control bot status
 bot_active = True
 
-# --- Database Setup for Wallet Balance ---
+# --- Database Setup for Wallet & Orders ---
 def init_db():
     conn = sqlite3.connect('bot_wallet.db', check_same_thread=False)
     cursor = conn.cursor()
@@ -41,6 +38,15 @@ def init_db():
             name TEXT,
             username TEXT,
             balance REAL DEFAULT 0.0
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS orders (
+            order_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            item_name TEXT,
+            price REAL,
+            status TEXT
         )
     ''')
     conn.commit()
@@ -74,6 +80,29 @@ def update_user_balance(user_id, amount):
         cursor.execute('UPDATE users SET balance = ? WHERE user_id = ?', (new_balance, user_id))
     conn.commit()
     conn.close()
+
+def add_order_to_db(user_id, item_name, price, status="Completed"):
+    conn = sqlite3.connect('bot_wallet.db', check_same_thread=False)
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO orders (user_id, item_name, price, status) VALUES (?, ?, ?, ?)', (user_id, item_name, price, status))
+    conn.commit()
+    conn.close()
+
+def get_all_users():
+    conn = sqlite3.connect('bot_wallet.db', check_same_thread=False)
+    cursor = conn.cursor()
+    cursor.execute('SELECT user_id FROM users')
+    rows = cursor.fetchall()
+    conn.close()
+    return [row[0] for row in rows]
+
+def get_user_orders(user_id):
+    conn = sqlite3.connect('bot_wallet.db', check_same_thread=False)
+    cursor = conn.cursor()
+    cursor.execute('SELECT item_name, price, status FROM orders WHERE user_id = ? ORDER BY order_id DESC LIMIT 5', (user_id,))
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
 
 def get_reply_keyboard():
     markup = ReplyKeyboardMarkup(resize_keyboard=True)
@@ -146,7 +175,7 @@ def callback_query(call):
         markup.row_width = 1
         
         btn_free = InlineKeyboardButton("🎁 20+ Free Likes", callback_data="free_likes")
-        btn_paid = InlineKeyboardButton("💎 220+ Likes - ₹10", callback_data="paid_likes")
+        btn_paid = InlineKeyboardButton("💎 220+ Likes - ₹10 (Wallet Pay)", callback_data="paid_likes")
         btn_back = InlineKeyboardButton("« Back to Menu", callback_data="main_menu")
         
         markup.add(btn_free, btn_paid, btn_back)
@@ -171,23 +200,55 @@ def callback_query(call):
         )
         
     elif call.data == "paid_likes":
-        bot.answer_callback_query(call.id, "Paid Plan selected")
-        paid_caption = f"""💎 <b>PREMIUM LIKE PACKAGE</b>
+        package_price = 10.0
+        if balance >= package_price:
+            update_user_balance(user.id, -package_price)
+            add_order_to_db(user.id, "220+ Likes Package", package_price, "Success")
+            new_bal = balance - package_price
+            
+            bot.answer_callback_query(call.id, "Payment Successful via Wallet! 🎉", show_alert=True)
+            success_text = f"""✅ <b>PAYMENT SUCCESSFUL!</b>
+
+💎 <b>Package:</b> 220+ Likes
+💸 <b>Amount Deducted:</b> ₹{package_price}
+💰 <b>Remaining Wallet Balance:</b> ₹{new_bal}
+
+🎉 Your wallet payment was successful! Send your UID or contact admin to process your likes."""
+            
+            markup = InlineKeyboardMarkup()
+            markup.add(InlineKeyboardButton("« Back to Menu", callback_data="main_menu"))
+            
+            bot.edit_message_text(
+                success_text,
+                chat_id=call.message.chat.id,
+                message_id=call.message.message_id,
+                parse_mode='HTML',
+                reply_markup=markup
+            )
+            
+            bot.send_message(
+                ADMIN_ID,
+                f"🔔 <b>NEW WALLET PURCHASE</b>\n\n👤 User: {user.first_name}\n🆔 ID: <code>{user.id}</code>\n🛍️ Item: 220+ Likes\n💸 Paid via Wallet: ₹{package_price}",
+                parse_mode='HTML'
+            )
+        else:
+            bot.answer_callback_query(call.id, "Insufficient balance! Please add balance.", show_alert=True)
+            paid_caption = f"""💎 <b>PREMIUM LIKE PACKAGE</b>
 
 📦 <b>Package:</b> 220+ Likes
 💰 <b>Price:</b> ₹10 Only
 💳 <b>Your Wallet Balance:</b> ₹{balance}
+
+❌ <b>Insufficient Balance in Wallet!</b> 
+You can pay via UPI QR below and submit UTR:
 
 1️⃣ <b>Scan QR Code above or Pay to UPI ID:</b>
 📌 UPI ID: <code>{YOUR_UPI_ID}</code>
 👤 Name: <b>Ariful Islam Khan</b>
 
 2️⃣ <b>Submit UTR after payment:</b>
-👉 <code>/utr [12-digit UTR] [Your UID] [Region]</code>
-💡 <i>Example:</i> <code>/utr 412345678912 1772894853 ind</code>
-
-✨ <i>Likes will be credited after manual verification!</i>"""
-        bot.send_photo(call.message.chat.id, QR_CODE_URL, caption=paid_caption, parse_mode='HTML')
+👉 <code>/utr [12-digit UTR] [Your UID] [Region]</code>"""
+            bot.send_photo(call.message.chat.id, QR_CODE_URL, caption=paid_caption, parse_mode='HTML')
         
     elif call.data == "main_menu":
         user_name = user.first_name if user else "User"
@@ -274,7 +335,17 @@ def callback_query(call):
 
     elif call.data == "my_orders":
         bot.answer_callback_query(call.id, "Loading orders...")
-        bot.send_message(call.message.chat.id, "📦 <b>MY ORDERS</b>\n\nYou have no active orders right now.", parse_mode='HTML')
+        orders = get_user_orders(user.id)
+        if not orders:
+            order_text = "📦 <b>MY ORDERS HISTORY</b>\n\nYou have no past orders right now."
+        else:
+            order_text = "📦 <b>MY RECENT ORDERS HISTORY</b>\n\n"
+            for idx, (item, price, status) in enumerate(orders, 1):
+                order_text += f"{idx}. <b>{item}</b> - ₹{price} [{status}]\n"
+        
+        markup = InlineKeyboardMarkup()
+        markup.add(InlineKeyboardButton("« Back to Menu", callback_data="main_menu"))
+        bot.send_message(call.message.chat.id, order_text, parse_mode='HTML', reply_markup=markup)
         
     elif call.data == "my_profile":
         bot.answer_callback_query(call.id, "Loading profile...")
@@ -322,6 +393,28 @@ def admin_add_balance(message):
     except Exception as e:
         bot.reply_to(message, f"❌ Error: {str(e)}")
 
+@bot.message_handler(commands=['broadcast'])
+def admin_broadcast(message):
+    if message.from_user is None or message.from_user.id != ADMIN_ID:
+        bot.reply_to(message, "❌ Only the owner can use this command!")
+        return
+        
+    text_to_broadcast = message.text.replace('/broadcast', '').strip()
+    if not text_to_broadcast:
+        bot.reply_to(message, "❌ <b>Usage:</b> <code>/broadcast [Your Message]</code>", parse_mode='HTML')
+        return
+        
+    users = get_all_users()
+    sent_count = 0
+    for uid in users:
+        try:
+            bot.send_message(uid, f"📢 <b>ANNOUNCEMENT:</b>\n\n{text_to_broadcast}", parse_mode='HTML')
+            sent_count += 1
+        except Exception:
+            pass
+            
+    bot.reply_to(message, f"✅ Broadcast sent successfully to {sent_count} users!")
+
 @bot.message_handler(commands=['help'])
 def help_command(message):
     help_text = f"""📖 <b>HELP & COMMANDS</b>
@@ -332,6 +425,7 @@ def help_command(message):
 
 <b>[Admin Commands]</b>
 🔸 <code>/addbalance [user_id] [amount]</code> - Add Balance
+🔸 <code>/broadcast [message]</code> - Send Broadcast
 🔸 <code>/on</code> - Start Bot Services
 🔸 <code>/off</code> - Stop Bot Services"""
     bot.reply_to(message, help_text, parse_mode='HTML')
@@ -371,7 +465,7 @@ def handle_like(message):
 
     args = message.text.split()
     if len(args) < 3:
-        bot.reply_to(message, "⚠️ <b>Invalid Format!</b>\nUse: <code>/like ind [Your UID]</code>", parse_mode='HTML')
+        bot.reply_to(message, "⚠️️ <b>Invalid Format!</b>\nUse: <code>/like ind [Your UID]</code>", parse_mode='HTML')
         return
 
     region = args[1].lower()
@@ -393,22 +487,23 @@ def handle_like(message):
 
         if int(likes_after) > int(likes_before) or int(likes_given) > 0:
             reply_text = f"""🎉 <b>LIKE SUCCESSFUL</b>
-
+━━━━━━━━━━━━━━━━━━
 👑 <b>Name:</b> {name}
-🎮 <b>UID:</b> {uid}
+🎮 <b>UID:</b> <code>{uid}</code>
 🌍 <b>Region:</b> {region.upper()}
-
-❤️ <b>Before:</b> {likes_before}
+━━━━━━━━━━━━━━━━━━
+❤️️ <b>Before:</b> {likes_before}
 💙 <b>Given:</b> {likes_given}
 💚 <b>After:</b> {likes_after}
+━━━━━━━━━━━━━━━━━━
 ⚡ <b>Remaining:</b> {remaining}"""
         else:
             reply_text = f"""⚠️ <b>LIMIT REACHED</b>
-
+━━━━━━━━━━━━━━━━━━
 👤 <b>Name:</b> {name}
-🆔 <b>UID:</b> {uid}
+🆔 <b>UID:</b> <code>{uid}</code>
 🌍 <b>Server:</b> {region.upper()}
-
+━━━━━━━━━━━━━━━━━━
 📊 <b>Status:</b> 0 Likes Added"""
 
         bot.edit_message_text(reply_text, chat_id=sent_msg.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
@@ -418,4 +513,5 @@ def handle_like(message):
 
 if __name__ == '__main__':
     bot.infinity_polling(skip_pending=True)
+    
     
