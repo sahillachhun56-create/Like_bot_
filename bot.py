@@ -17,7 +17,7 @@ def run_flask():
 
 threading.Thread(target=run_flask).start()
 
-API_TOKEN = "8591551561:AAG0HuGmuJ84qtjo9NYSjFT-jYQcqGf8QBU"
+API_TOKEN = '8591551561:AAG0HuGmuJ84qtjo9NYSjFT-jYQcqGf8QBU'
 bot = telebot.TeleBot(API_TOKEN)
 
 # Your Admin Telegram ID and UPI Details
@@ -192,13 +192,12 @@ def callback_query(call):
             pass
             
     elif call.data == "free_likes":
-        bot.answer_callback_query(call.id, "Enter your UID for Free Likes")
+        bot.answer_callback_query(call.id, "Free Likes selected")
         msg = bot.send_message(
             call.message.chat.id, 
-            "🎮 <b>Please enter your Free Fire UID:</b>\n(Example: <code>1772894853</code>)", 
+            "🎮 <b>To send Free Likes, use the command format below:</b>\n\n👉 <code>/like ind 1772894853</code>\n\n<i>(Replace 1772894853 with your actual UID)</i>", 
             parse_mode='HTML'
         )
-        bot.register_next_step_handler(msg, process_free_like_uid)
         
     elif call.data == "paid_likes":
         package_price = 10.0
@@ -211,10 +210,9 @@ def callback_query(call):
             
             msg = bot.send_message(
                 call.message.chat.id,
-                f"✅ <b>PAYMENT SUCCESSFUL!</b>\n\n💎 <b>Package:</b> 220+ Likes\n💸 <b>Amount Deducted:</b> ₹{package_price}\n💰 <b>Remaining Wallet Balance:</b> ₹{new_bal}\n\n🎮 <b>Please enter your Free Fire UID to get your likes:</b>",
+                f"✅ <b>PAYMENT SUCCESSFUL!</b>\n\n💎 <b>Package:</b> 220+ Likes\n💸 <b>Amount Deducted:</b> ₹{package_price}\n💰 <b>Remaining Wallet Balance:</b> ₹{new_bal}\n\n🎮 <b>To send likes, use the command format below:</b>\n👉 <code>/like ind [Your UID]</code>",
                 parse_mode='HTML'
             )
-            bot.register_next_step_handler(msg, process_paid_like_uid)
         else:
             bot.answer_callback_query(call.id, "Insufficient balance! Please add balance.", show_alert=True)
             paid_caption = f"""💎 <b>PREMIUM LIKE PACKAGE</b>
@@ -313,7 +311,7 @@ You can pay via UPI QR below and submit UTR:
 2️⃣ <b>Send Transaction UTR:</b>
 👉 <code>/utr [UTR Number] [Your UID] [Region]</code>
 
-✨ <i>Balance will be updated after confirmation.</i>"""
+✨ <i>Balance will be updated after verification.</i>"""
         
         bot.send_photo(call.message.chat.id, QR_CODE_URL, caption=pay_caption, parse_mode='HTML')
 
@@ -350,77 +348,6 @@ Reach out to the admin directly:
 
 👑 <b>Support Desk:</b> @Momshad_00"""
         bot.send_message(call.message.chat.id, support_text, parse_mode='HTML')
-
-def process_free_like_uid(message):
-    uid = message.text.strip()
-    region = "ind"
-
-    if not uid.isdigit():
-        bot.reply_to(message, "❌ Invalid UID! Please enter numbers only.")
-        return
-
-    sent_msg = bot.reply_to(message, "⏳ <b>Processing free likes...</b>", parse_mode='HTML')
-    api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&server_name={region}"
-
-    try:
-        headers = {'User-Agent': 'Mozilla/5.0'}
-        response = requests.get(api_url, headers=headers)
-        data = response.json()
-
-        name = str(data.get('PlayerNickname', 'Unknown'))
-        likes_before = str(data.get('LikesbeforeCommand', '0'))
-        likes_given = str(data.get('LikesGivenByAPI', '0'))
-        likes_after = str(data.get('LikesafterCommand', '0'))
-        remaining = str(data.get('Remaining_requests', '0'))
-
-        if int(likes_after) > int(likes_before) or int(likes_given) > 0:
-            reply_text = (
-                "🎉 <b>LIKE SENT SUCCESSFULLY!</b>\n"
-                "━━━━━━━━━━━━━━━━━━\n"
-                f"👑 <b>Player Name:</b> {name}\n"
-                f"🆔 <b>UID:</b> <code>{uid}</code>\n"
-                f"🌍 <b>Region:</b> {region.upper()}\n"
-                "━━━━━━━━━━━━━━━━━━\n"
-                f"❤ <b>Before:</b> {likes_before}\n"
-                f"💙 <b>Given:</b> {likes_given}\n"
-                f"💚 <b>After:</b> {likes_after}\n"
-                "━━━━━━━━━━━━━━━━━━\n"
-                f"⚡ <b>Remaining:</b> {remaining}"
-            )
-        else:
-            reply_text = (
-                "⚠️ <b>LIMIT REACHED / ERROR</b>\n"
-                "━━━━━━━━━━━━━━━━━━\n"
-                f"👑 <b>Player Name:</b> {name}\n"
-                f"🆔 <b>UID:</b> <code>{uid}</code>\n"
-                f"🌍 <b>Region:</b> {region.upper()}\n"
-                "━━━━━━━━━━━━━━━━━━\n"
-                f"❤ <b>Before:</b> {likes_before}\n"
-                f"💙 <b>Given:</b> {likes_given}\n"
-                f"💚 <b>After:</b> {likes_after}\n"
-                "━━━━━━━━━━━━━━━━━━\n"
-                f"⚡ <b>Remaining:</b> {remaining}"
-            )
-
-        bot.edit_message_text(reply_text, chat_id=sent_msg.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
-    except Exception as e:
-        bot.edit_message_text(f"❌ <b>API Error:</b> {str(e)}", chat_id=sent_msg.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
-
-def process_paid_like_uid(message):
-    uid = message.text.strip()
-    user = message.from_user
-
-    if not uid.isdigit():
-        bot.reply_to(message, "❌ Invalid UID! Please enter numbers only.")
-        return
-
-    bot.reply_to(message, f"✅ UID <code>{uid}</code> received! Admin has been notified to send your 220+ likes.", parse_mode='HTML')
-    
-    bot.send_message(
-        ADMIN_ID,
-        f"🔔 <b>PAID LIKES - UID SUBMITTED</b>\n\n👤 User Name: {user.first_name}\n🆔 Telegram ID: <code>{user.id}</code>\n🔗 Username: @{user.username if user.username else 'None'}\n🎮 Free Fire UID: <code>{uid}</code>\n📦 Package: 220+ Likes (Paid via Wallet)",
-        parse_mode='HTML'
-    )
 
 @bot.message_handler(commands=['addbalance'])
 def admin_add_balance(message):
@@ -474,7 +401,7 @@ def admin_broadcast(message):
 def help_command(message):
     help_text = f"""📖 <b>HELP & COMMANDS</b>
 
-🔹 <code>/like [region] [uid]</code> - Free Likes
+🔹 <code>/like ind [uid]</code> - Free Likes
 🔹 <code>/utr [utr] [uid] [region]</code> - Submit UTR
 🔹 <code>/menu</code> - Open Dashboard
 
@@ -517,14 +444,17 @@ def handle_like(message):
         bot.reply_to(message, "⚠️ <b>Bot is currently inactive.</b>", parse_mode='HTML')
         return
 
-        args = message.text.split()
+    args = message.text.split()
     if len(args) < 3:
         bot.reply_to(message, "⚠️ <b>Invalid Format!</b>\nUse this format:\n<code>/like ind 1772894853</code>", parse_mode='HTML')
         return
 
     region = args[1].lower()
     uid = args[2]
-    user = message.from_user
+
+    if not uid.isdigit():
+        bot.reply_to(message, "❌ <b>Invalid UID!</b> Please enter numbers only.", parse_mode='HTML')
+        return
 
     sent_msg = bot.reply_to(message, "⏳ <b>Processing your request...</b>", parse_mode='HTML')
     api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&server_name={region}"
@@ -576,6 +506,7 @@ def handle_like(message):
 
 if __name__ == '__main__':
     bot.infinity_polling(skip_pending=True)
+        
     
         
 
