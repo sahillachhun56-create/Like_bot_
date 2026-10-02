@@ -522,7 +522,7 @@ def handle_like(message):
         likes_after = str(data.get('LikesafterCommand', '0'))
         remaining = str(data.get('Remaining_requests', '0'))
 
-                if int(likes_after) > int(likes_before) or int(likes_given) > 0:
+        if int(likes_after) > int(likes_before) or int(likes_given) > 0:
             reply_text = f"""🎉 <b>LIKE SUCCESSFUL</b>
 ━━━━━━━━━━━━━━━━━━
 👑 <b>Player Name:</b> {name}
@@ -550,3 +550,4 @@ def handle_like(message):
 
 if __name__ == '__main__':
     bot.infinity_polling(skip_pending=True)
+    
