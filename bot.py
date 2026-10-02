@@ -190,11 +190,11 @@ def callback_query(call):
             
     elif call.data == "free_likes":
         bot.answer_callback_query(call.id, "Enter your UID for Free Likes")
-        msg = bot.send_message(
-            call.message.chat.id, 
-            "🎮 <b>Please enter your Free Fire UID:</b>\n(Example: <code>1772894853</code>)", 
-            parse_mode='HTML'
-        )
+                msg = bot.send_message(
+        call.message.chat.id,
+        "🎮 <b>Please enter your Free Fire UID:</b>\nExample: <code>/like ind 1772894853</code>",
+        parse_mode='HTML'
+                )
         bot.register_next_step_handler(msg, process_free_like_uid)
         
     elif call.data == "paid_likes":
