@@ -193,10 +193,16 @@ def callback_query(call):
             
     elif call.data == "free_likes":
         bot.answer_callback_query(call.id, "Free Likes selected")
-        msg = bot.send_message(
+        
+        markup = InlineKeyboardMarkup()
+        btn_sample = InlineKeyboardButton("✨ Tap to Use Example Command", switch_inline_query_current_chat="/like ind 1772894853")
+        markup.add(btn_sample)
+        
+        bot.send_message(
             call.message.chat.id, 
-            "🎮 <b>To send Free Likes, use the command format below:</b>\n\n👉 <code>/like ind 1772894853</code>\n\n<i>(Replace 1772894853 with your actual UID)</i>", 
-            parse_mode='HTML'
+            "🎮 <b>To send Free Likes, click the button below or type the command:</b>\n\n👉 <code>/like ind 1772894853</code>\n\n<i>(Replace 1772894853 with your actual UID)</i>", 
+            parse_mode='HTML',
+            reply_markup=markup
         )
         
     elif call.data == "paid_likes":
@@ -210,9 +216,10 @@ def callback_query(call):
             
             msg = bot.send_message(
                 call.message.chat.id,
-                f"✅ <b>PAYMENT SUCCESSFUL!</b>\n\n💎 <b>Package:</b> 220+ Likes\n💸 <b>Amount Deducted:</b> ₹{package_price}\n💰 <b>Remaining Wallet Balance:</b> ₹{new_bal}\n\n🎮 <b>To send likes, use the command format below:</b>\n👉 <code>/like ind [Your UID]</code>",
+                f"✅ <b>PAYMENT SUCCESSFUL!</b>\n\n💎 <b>Package:</b> 220+ Likes\n💸 <b>Amount Deducted:</b> ₹10\n💰 <b>Remaining Balance:</b> ₹{new_bal}\n\n👉 <b>Please enter your Free Fire UID and Region now</b> (Example: <code>1772894853 ind</code>):",
                 parse_mode='HTML'
             )
+            bot.register_next_step_handler(msg, process_paid_uid)
         else:
             bot.answer_callback_query(call.id, "Insufficient balance! Please add balance.", show_alert=True)
             paid_caption = f"""💎 <b>PREMIUM LIKE PACKAGE</b>
@@ -348,6 +355,27 @@ Reach out to the admin directly:
 
 👑 <b>Support Desk:</b> @Momshad_00"""
         bot.send_message(call.message.chat.id, support_text, parse_mode='HTML')
+
+def process_paid_uid(message):
+    user = message.from_user
+    text = message.text.strip()
+    
+    admin_alert = (
+        "💎 <b>NEW PAID LIKES ORDER!</b>\n"
+        "━━━━━━━━━━━━━━━━━━\n"
+        f"👤 <b>Name:</b> {user.first_name}\n"
+        f"🆔 <b>User ID:</b> <code>{user.id}</code>\n"
+        f"🔗 <b>Username:</b> @{user.username if user.username else 'None'}\n"
+        f"🎮 <b>User Input (UID & Region):</b> <code>{text}</code>\n"
+        "━━━━━━━━━━━━━━━━━━\n"
+        "👉 <i>Copy the UID and send likes from your end!</i>"
+    )
+    
+    try:
+        bot.send_message(ADMIN_ID, admin_alert, parse_mode='HTML')
+        bot.reply_to(message, "✅ <b>Your order has been sent to the Admin successfully!</b>\nYou will receive your likes soon.", parse_mode='HTML')
+    except Exception as e:
+        bot.reply_to(message, f"❌ Error notifying admin: {str(e)}")
 
 @bot.message_handler(commands=['addbalance'])
 def admin_add_balance(message):
@@ -485,11 +513,11 @@ def handle_like(message):
                 f"⚡ <b>Remaining:</b> {remaining}"
             )
         else:
-            reply_text = (
+                        reply_text = (
                 "⚠️ <b>LIMIT REACHED / ERROR</b>\n"
                 "━━━━━━━━━━━━━━━━━━\n"
                 f"👑 <b>Player Name:</b> {name}\n"
-                f"🆔 <b>UID:</b> <code>{uid}</code>\n"
+                f"🆔 <code>{uid}</code>\n"
                 f"🌍 <b>Region:</b> {region.upper()}\n"
                 "━━━━━━━━━━━━━━━━━━\n"
                 f"❤ <b>Before:</b> {likes_before}\n"
@@ -506,6 +534,7 @@ def handle_like(message):
 
 if __name__ == '__main__':
     bot.infinity_polling(skip_pending=True)
+            
         
     
         
