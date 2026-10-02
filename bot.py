@@ -17,7 +17,7 @@ def run_flask():
 
 threading.Thread(target=run_flask).start()
 
-API_TOKEN = "8591551561:AAEu4CcuRJ_nUIKkXyXadus1wv_6QF9bUVI"
+API_TOKEN = "8591551561:AAEhtrjaOZxoqsKQ_A4TWjsK5-7K_EgoCQw"
 bot = telebot.TeleBot(API_TOKEN)
 
 # Your Admin Telegram ID and UPI Details
@@ -195,7 +195,7 @@ def callback_query(call):
         bot.answer_callback_query(call.id, "Free Likes selected!")
         bot.send_message(
             call.message.chat.id, 
-            "🎁 <b>How to get Free Likes:</b>\n\n📌 Format: <code>/like ind [Your UID]</code>\n💡 Example: <code>/like ind 1772894853</code>\n\n(This is completely free!)", 
+            "🎁 <b>How to get Free Likes:</b>\n\nType this command in chat with your UID:\n📌 <code>/like ind [Your UID]</code>\n💡 Example: <code>/like ind 1772894853</code>\n\n(This is completely free!)", 
             parse_mode='HTML'
         )
         
@@ -228,7 +228,7 @@ def callback_query(call):
             
             bot.send_message(
                 ADMIN_ID,
-                f"🔔 <b>NEW WALLET PURCHASE</b>\n\n👤 User: {user.first_name}\n🆔 ID: <code>{user.id}</code>\n🛍️ Item: 220+ Likes\n💸 Paid via Wallet: ₹{package_price}",
+                f"🔔 <b>NEW WALLET PURCHASE (PAID LIKES)</b>\n\n👤 User Name: {user.first_name}\n🆔 Telegram ID: <code>{user.id}</code>\n🔗 Username: @{user.username if user.username else 'None'}\n🛍️ Item: 220+ Likes\n💸 Paid via Wallet: ₹{package_price}",
                 parse_mode='HTML'
             )
         else:
@@ -465,11 +465,12 @@ def handle_like(message):
 
     args = message.text.split()
     if len(args) < 3:
-        bot.reply_to(message, "⚠️️ <b>Invalid Format!</b>\nUse: <code>/like ind [Your UID]</code>", parse_mode='HTML')
+        bot.reply_to(message, "⚠️ <b>Invalid Format!</b>\nTo get free likes, type:\n<code>/like ind [Your UID]</code>\nExample: <code>/like ind 1772894853</code>", parse_mode='HTML')
         return
 
     region = args[1].lower()
     uid = args[2]
+    user = message.from_user
 
     sent_msg = bot.reply_to(message, "⏳ Processing your request...")
     api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&server_name={region}"
@@ -488,19 +489,19 @@ def handle_like(message):
         if int(likes_after) > int(likes_before) or int(likes_given) > 0:
             reply_text = f"""🎉 <b>LIKE SUCCESSFUL</b>
 ━━━━━━━━━━━━━━━━━━
-👑 <b>Name:</b> {name}
+👑 <b>Player Name:</b> {name}
 🎮 <b>UID:</b> <code>{uid}</code>
 🌍 <b>Region:</b> {region.upper()}
 ━━━━━━━━━━━━━━━━━━
-❤️️ <b>Before:</b> {likes_before}
+❤ <b>Before:</b> {likes_before}
 💙 <b>Given:</b> {likes_given}
 💚 <b>After:</b> {likes_after}
 ━━━━━━━━━━━━━━━━━━
 ⚡ <b>Remaining:</b> {remaining}"""
         else:
-            reply_text = f"""⚠️ <b>LIMIT REACHED</b>
+            reply_text = f"""⚠️ <b>LIMIT REACHED / ERROR</b>
 ━━━━━━━━━━━━━━━━━━
-👤 <b>Name:</b> {name}
+👤 <b>Player Name:</b> {name}
 🆔 <b>UID:</b> <code>{uid}</code>
 🌍 <b>Server:</b> {region.upper()}
 ━━━━━━━━━━━━━━━━━━
@@ -513,5 +514,6 @@ def handle_like(message):
 
 if __name__ == '__main__':
     bot.infinity_polling(skip_pending=True)
+        
     
     
