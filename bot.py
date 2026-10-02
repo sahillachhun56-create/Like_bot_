@@ -188,7 +188,7 @@ def callback_query(call):
         except Exception:
             pass
             
-    elif call.data == "free_likes":
+    'elif' call.data == "free_likes":
     bot.answer_callback_query(call.id, "Enter your UID for Free Likes")
     msg = bot.send_message(
         call.message.chat.id,
