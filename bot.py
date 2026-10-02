@@ -195,9 +195,7 @@ def callback_query(call):
         "🎮 <b>Please enter your Free Fire UID:</b>\nExample: <code>/like ind 1772894853</code>",
         parse_mode='HTML'
     )
-    bot.register_next_step_handler(msg, process_free_like_uid)
-    
-        
+    bot.register_next_step_handler(msg, process_free_like_uid) 
     elif call.data == "paid_likes":
         package_price = 10.0
         if balance >= package_price:
