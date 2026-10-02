@@ -17,7 +17,7 @@ def run_flask():
 
 threading.Thread(target=run_flask).start()
 
-API_TOKEN = "8591551561:AAFTHUtgpeEEAabSYPgznRkHpsOAUqNfLyk"
+API_TOKEN = "8591551561:AAFIV_ixu9bY7ZW1in5LoUfpaaVahjA7qpc"
 bot = telebot.TeleBot(API_TOKEN)
 
 ADMIN_ID = 8380823727
@@ -188,14 +188,15 @@ def callback_query(call):
         except Exception:
             pass
             
-    'elif' call.data == "free_likes":
-    bot.answer_callback_query(call.id, "Enter your UID for Free Likes")
-    msg = bot.send_message(
-        call.message.chat.id,
-        "🎮 <b>Please enter your Free Fire UID:</b>\nExample: <code>/like ind 1772894853</code>",
-        parse_mode='HTML'
-    )
-    bot.register_next_step_handler(msg, process_free_like_uid) 
+    elif call.data == "free_likes":
+        bot.answer_callback_query(call.id, "Enter your UID for Free Likes")
+        msg = bot.send_message(
+    call.message.chat.id,
+    "🎮 <b>Please enter your Free Fire UID:</b>\nExample: <code>/like ind 1772894853</code>",
+    parse_mode='HTML'
+        )
+        bot.register_next_step_handler(msg, process_free_like_uid)
+        
     elif call.data == "paid_likes":
         package_price = 10.0
         if balance >= package_price:
@@ -495,20 +496,20 @@ def handle_utr(message):
 @bot.message_handler(commands=['like'])
 def handle_like(message):
     if not bot_active:
-        bot.reply_to(message, "⚠️ Bot is currently offline. Send /on to start it.")
+        bot.reply_to(message, "⚠️ Bot is currently inactive.")
         return
 
     args = message.text.split()
     if len(args) < 3:
-        bot.reply_to(message, "⚠️ <b>Invalid Format!</b>\nTo get free likes, type:\n<code>/like ind [Your UID]</code>\nExample: <code>/like ind 1772894853</code>", parse_mode='HTML')
+        bot.reply_to(message, "⚠️ <b>Invalid format!</b> Use: /like [region] [uid]", parse_mode='HTML')
         return
 
     region = args[1].lower()
     uid = args[2]
     user = message.from_user
 
-    sent_msg = bot.reply_to(message, "⏳ Processing your request...")
-    api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&server_name={region}"
+    sent_msg = bot.reply_to(message, "⏳ Processing your request...", parse_mode='HTML')
+    api_url = f"https://like-apii-one.vercel.app/like?region={region}&uid={uid}"
 
     try:
         headers = {'User-Agent': 'Mozilla/5.0'}
@@ -516,16 +517,16 @@ def handle_like(message):
         data = response.json()
 
         name = str(data.get('PlayerNickname', 'Unknown'))
-        likes_before = str(data.get('LikesbeforeCommand', '0'))
-        likes_given = str(data.get('LikesGivenByAPI', '0'))
-        likes_after = str(data.get('LikesafterCommand', '0'))
-        remaining = str(data.get('Remaining_requests', '0'))
+        likes_before = str(data.get('LikesBefore', '0'))
+        likes_given = str(data.get('LikesGiven', '0'))
+        likes_after = str(data.get('LikesAfter', '0'))
+        remaining = str(data.get('Remaining', '0'))
 
-        if int(likes_after) > int(likes_before) or int(likes_given) > 0:
-            reply_text = f"""🎉 <b>LIKE SUCCESSFUL</b>
+        if int(likes_after) > int(likes_before):
+            reply_text = f"""🎉 <b>LIKE SENT SUCCESSFULLY!</b>
 ━━━━━━━━━━━━━━━━━━
 👑 <b>Player Name:</b> {name}
-🎮 <b>UID:</b> <code>{uid}</code>
+🆔 <b>UID:</b> <code>{uid}</code>
 🌍 <b>Region:</b> {region.upper()}
 ━━━━━━━━━━━━━━━━━━
 ❤ <b>Before:</b> {likes_before}
