@@ -528,7 +528,7 @@ def handle_utr(message):
     region = args[2] if len(args) > 3 else "ind"
     user = message.from_user
 
-                admin_msg = (
+                    admin_msg = (
         "🔔 <b>NEW PAYMENT UTR SUBMITTED</b>\n"
         "━━━━━━━━━━━━━━━━━━\n"
         f"👤 <b>Name:</b> {user.first_name}\n"
@@ -539,7 +539,6 @@ def handle_utr(message):
 
     bot.send_message(ADMIN_ID, admin_msg, parse_mode='HTML')
     bot.reply_to(message, "✅ Your UTR has been submitted to the admin for verification. Please wait.")
-
 
 @bot.message_handler(commands=['like'])
 def handle_like(message):
@@ -606,4 +605,5 @@ def handle_like(message):
 
 if __name__ == '__main__':
     bot.infinity_polling(skip_pending=True)
+        
 
