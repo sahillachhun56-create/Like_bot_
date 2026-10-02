@@ -528,12 +528,14 @@ def handle_utr(message):
     region = args[2] if len(args) > 3 else "ind"
     user = message.from_user
 
-        admin_msg = f"""🔔 <b>NEW PAYMENT UTR SUBMITTED</b>
-━━━━━━━━━━━━━━━━━━
-👤 <b>Name:</b> {user.first_name}
-🆔 <b>User ID:</b> <code>{user.id}</code>
-🔗 <b>Username:</b> @{user.username if user.username else 'None'}
-💳 <b>UTR Number:</b> <code>{utr_number}</code>"""
+            admin_msg = (
+        "🔔 <b>NEW PAYMENT UTR SUBMITTED</b>\n"
+        "━━━━━━━━━━━━━━━━━━\n"
+        f"👤 <b>Name:</b> {user.first_name}\n"
+        f"🆔 <b>User ID:</b> <code>{user.id}</code>\n"
+        f"🔗 <b>Username:</b> @{user.username if user.username else 'None'}\n"
+        f"💳 <b>UTR Number:</b> <code>{utr_number}</code>"
+    )
 
     bot.send_message(ADMIN_ID, admin_msg, parse_mode='HTML')
     bot.reply_to(message, "✅ Your UTR has been submitted to the admin for verification. Please wait.")
@@ -568,29 +570,33 @@ def handle_like(message):
         remaining = str(data.get('Remaining', '0'))
 
         if int(likes_after) > int(likes_before):
-            reply_text = f"""🎉 <b>LIKE SENT SUCCESSFULLY!</b>
-━━━━━━━━━━━━━━━━━━
-👑 <b>Player Name:</b> {name}
-🆔 <b>UID:</b> <code>{uid}</code>
-🌍 <b>Region:</b> {region.upper()}
-━━━━━━━━━━━━━━━━━━
-❤ <b>Before:</b> {likes_before}
-💙 <b>Given:</b> {likes_given}
-💚 <b>After:</b> {likes_after}
-━━━━━━━━━━━━━━━━━━
-⚡ <b>Remaining:</b> {remaining}"""
+            reply_text = (
+                "🎉 <b>LIKE SENT SUCCESSFULLY!</b>\n"
+                "━━━━━━━━━━━━━━━━━━\n"
+                f"👑 <b>Player Name:</b> {name}\n"
+                f"🆔 <b>UID:</b> <code>{uid}</code>\n"
+                f"🌍 <b>Region:</b> {region.upper()}\n"
+                "━━━━━━━━━━━━━━━━━━\n"
+                f"❤ <b>Before:</b> {likes_before}\n"
+                f"💙 <b>Given:</b> {likes_given}\n"
+                f"💚 <b>After:</b> {likes_after}\n"
+                "━━━━━━━━━━━━━━━━━━\n"
+                f"⚡ <b>Remaining:</b> {remaining}"
+            )
         else:
-            reply_text = f"""⚠️ <b>LIMIT REACHED / ERROR</b>
-━━━━━━━━━━━━━━━━━━
-👑 <b>Player Name:</b> {name}
-🆔 <b>UID:</b> <code>{uid}</code>
-🌍 <b>Region:</b> {region.upper()}
-━━━━━━━━━━━━━━━━━━
-❤ <b>Before:</b> {likes_before}
-💙 <b>Given:</b> {likes_given}
-💚 <b>After:</b> {likes_after}
-━━━━━━━━━━━━━━━━━━
-⚡ <b>Remaining:</b> {remaining}"""
+            reply_text = (
+                "⚠️ <b>LIMIT REACHED / ERROR</b>\n"
+                "━━━━━━━━━━━━━━━━━━\n"
+                f"👑 <b>Player Name:</b> {name}\n"
+                f"🆔 <b>UID:</b> <code>{uid}</code>\n"
+                f"🌍 <b>Region:</b> {region.upper()}\n"
+                "━━━━━━━━━━━━━━━━━━\n"
+                f"❤ <b>Before:</b> {likes_before}\n"
+                f"💙 <b>Given:</b> {likes_given}\n"
+                f"💚 <b>After:</b> {likes_after}\n"
+                "━━━━━━━━━━━━━━━━━━\n"
+                f"⚡ <b>Remaining:</b> {remaining}"
+            )
 
         bot.edit_message_text(reply_text, chat_id=sent_msg.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
 
@@ -599,3 +605,4 @@ def handle_like(message):
 
 if __name__ == '__main__':
     bot.infinity_polling(skip_pending=True)
+
