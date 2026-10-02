@@ -3,7 +3,7 @@ import telebot
 import requests
 from flask import Flask
 import threading
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 app = Flask('')
 
@@ -16,12 +16,15 @@ def run_flask():
 
 threading.Thread(target=run_flask).start()
 
-API_TOKEN = "8591551561:AAHdwcPBTf-j8K5quVjKcZXrvG1YJYAX-8s"
+API_TOKEN = "8591551561:AAEHli4517JUJOZ_aMH_Ot7wuuueDQyJLEQ"
 bot = telebot.TeleBot(API_TOKEN)
 
 # Your Admin Telegram ID
 ADMIN_ID = 8380823727
 YOUR_UPI_ID = "orthodontist@airtel"
+
+# 📌 अपने QR Code की Image का Direct Link यहाँ डालें
+QR_CODE_URL = "YOUR_QR_IMAGE_DIRECT_URL_HERE" 
 
 # Global variable to control bot status
 bot_active = True
@@ -48,34 +51,35 @@ def on_command(message):
 def menu_command(message):
     user_name = message.from_user.first_name if message.from_user else "User"
     
-    # Popup with Menu option via Inline Markup inside alert/callback simulation or standard greeting with Menu Button
     markup = InlineKeyboardMarkup()
     markup.row_width = 1
     
-    btn_open_menu = InlineKeyboardButton("⚡ Click Here To Open Menu ⚡", callback_data="main_menu")
-    btn_shop = InlineKeyboardButton("🛍️ Shop / Plans", callback_data="shop_menu")
-    btn_balance = InlineKeyboardButton("💰 Add Balance", callback_data="add_balance")
-    btn_profile = InlineKeyboardButton("👤 My Profile", callback_data="my_profile")
-    btn_support = InlineKeyboardButton("📞 Support", callback_data="support_menu")
-    btn_help = InlineKeyboardButton("🤖 Help Menu", callback_data="help_menu")
+    btn_open_menu = InlineKeyboardButton("⚡ Open Main Dashboard ⚡", callback_data="main_menu")
+    btn_shop = InlineKeyboardButton("🛍️ Shop & Like Plans", callback_data="shop_menu")
+    btn_balance = InlineKeyboardButton("💳 Add Wallet Balance", callback_data="add_balance")
+    btn_profile = InlineKeyboardButton("👤 User Profile", callback_data="my_profile")
+    btn_support = InlineKeyboardButton("💬 Customer Support", callback_data="support_menu")
+    btn_help = InlineKeyboardButton("📖 Help & Commands", callback_data="help_menu")
     
     markup.add(btn_open_menu, btn_shop, btn_balance, btn_profile, btn_support, btn_help)
     
-    menu_text = f"""🔥 ━━━━━━━━━━━━━━━━━━━━ 🔥
-      <b>⚡ WELCOME TO MOMSHAD LIKE BOT ⚡</b>
-🔥 ━━━━━━━━━━━━━━━━━━━━ 🔥
+    # 🌟 Highly Professional & Modern Welcome Card Design
+    menu_text = f"""╭━━━ <b>⚡ OFFICIAL MOMSHAD BOT ⚡</b> ━━━╮
+┃
+┃  👋 Welcome, <b>{user_name}</b>!
+┃  🚀 Instant Free & Paid Free Fire Likes.
+┃
+╰━━━━━━━━━━━━━━━━━━━━━━━━━━╯
 
-👋 Hello <b>{user_name}</b>! 
-Get lightning-fast Free & Paid likes for your Free Fire account instantly.
+💎 <b>Select an option from the panel below:</b>
+• 🎁 <b>Free Likes:</b> Instant daily delivery.
+• ⚡ <b>Paid Plans:</b> Heavy bulk likes at low cost.
+• 💳 <b>Wallet:</b> Add funds securely via UPI/QR.
 
-📌 <b>Choose an option below or tap the Menu button:</b>
-• Browse Free & Paid Like Plans.
-• Manage your wallet balance & profile.
-
-🔥 ━━━━━━━━━━━━━━━━━━━━ 🔥
-👑 <b>OWNER :</b> @Momshad_00"""
+────────────────────────────
+👑 <b>Owner & Admin :</b> @Momshad_00
+⭐ <i>Status : Active & Online 24/7</i>"""
     
-    # Triggering a welcoming popup alert when /start is used
     try:
         bot.send_dice(message.chat.id, emoji='🎯')
     except Exception:
@@ -90,14 +94,14 @@ def callback_query(call):
         markup.row_width = 1
         
         btn_free = InlineKeyboardButton("🎁 20+ Free Likes", callback_data="free_likes")
-        btn_paid = InlineKeyboardButton("💎 220+ Likes - Rs.10", callback_data="paid_likes")
-        btn_back = InlineKeyboardButton("⬅ Back to Menu", callback_data="main_menu")
+        btn_paid = InlineKeyboardButton("💎 220+ Likes - ₹10", callback_data="paid_likes")
+        btn_back = InlineKeyboardButton("« Back to Main Menu", callback_data="main_menu")
         
         markup.add(btn_free, btn_paid, btn_back)
         
         try:
             bot.edit_message_text(
-                "🛍️ <b>SELECT LIKE PLAN</b>\n──────────────────\nChoose your desired pack below:",
+                "╭━━━ 🛍️ <b>STORE & PRICING</b> ━━━╮\n┃\n┃  Select your preferred package below:\n┃\n╰━━━━━━━━━━━━━━━━━━━━━━╯",
                 chat_id=call.message.chat.id,
                 message_id=call.message.message_id,
                 parse_mode='HTML',
@@ -116,48 +120,59 @@ def callback_query(call):
         
     elif call.data == "paid_likes":
         bot.answer_callback_query(call.id, "Paid Plan selected")
-        paid_text = f"""💎 <b>220+ Likes - Rs. 10</b>
-──────────────────
-1️⃣ Pay ₹10 to the UPI ID below:
+        paid_text = f"""╭━━━ 💎 <b>PREMIUM LIKE PACKAGE</b> ━━━╮
+┃
+┃  📦 <b>Package:</b> 220+ Likes
+┃  💰 <b>Price:</b> ₹10 Only
+┃
+╰━━━━━━━━━━━━━━━━━━━━━━━━━━╯
+
+1️⃣ <b>Scan QR Code or Pay to UPI ID:</b>
 📌 UPI ID: <code>{YOUR_UPI_ID}</code>
 👤 Name: <b>Ariful Islam Khan</b>
 
-2️⃣ After payment, send the 12-digit **UTR / Transaction ID** using this format:
+2️⃣ <b>Submit UTR after payment:</b>
 👉 <code>/utr [12-digit UTR] [Your UID] [Region]</code>
-💡 Example: <code>/utr 412345678912 1772894853 ind</code>
+💡 <i>Example:</i> <code>/utr 412345678912 1772894853 ind</code>
 
-3️⃣ Likes will be added to your account after verification!"""
-        bot.send_message(call.message.chat.id, paid_text, parse_mode='HTML')
+✨ <i>Likes will be credited instantly upon manual verification!</i>"""
+        
+        if QR_CODE_URL and QR_CODE_URL != "YOUR_QR_IMAGE_DIRECT_URL_HERE":
+            bot.send_photo(call.message.chat.id, QR_CODE_URL, caption=paid_text, parse_mode='HTML')
+        else:
+            bot.send_message(call.message.chat.id, paid_text, parse_mode='HTML')
         
     elif call.data == "main_menu":
         user_name = call.from_user.first_name if call.from_user else "User"
-        bot.answer_callback_query(call.id, "⚡ Menu opened successfully!")
+        bot.answer_callback_query(call.id, "⚡ Dashboard loaded successfully!")
         
         markup = InlineKeyboardMarkup()
         markup.row_width = 1
         
-        btn_open_menu = InlineKeyboardButton("⚡ Main Menu Panel ⚡", callback_data="main_menu")
-        btn_shop = InlineKeyboardButton("🛍️ Shop / Plans", callback_data="shop_menu")
-        btn_balance = InlineKeyboardButton("💰 Add Balance", callback_data="add_balance")
-        btn_profile = InlineKeyboardButton("👤 My Profile", callback_data="my_profile")
-        btn_support = InlineKeyboardButton("📞 Support", callback_data="support_menu")
-        btn_help = InlineKeyboardButton("🤖 Help Menu", callback_data="help_menu")
+        btn_open_menu = InlineKeyboardButton("⚡ Open Main Dashboard ⚡", callback_data="main_menu")
+        btn_shop = InlineKeyboardButton("🛍️ Shop & Like Plans", callback_data="shop_menu")
+        btn_balance = InlineKeyboardButton("💳 Add Wallet Balance", callback_data="add_balance")
+        btn_profile = InlineKeyboardButton("👤 User Profile", callback_data="my_profile")
+        btn_support = InlineKeyboardButton("💬 Customer Support", callback_data="support_menu")
+        btn_help = InlineKeyboardButton("📖 Help & Commands", callback_data="help_menu")
         
         markup.add(btn_open_menu, btn_shop, btn_balance, btn_profile, btn_support, btn_help)
         
-        menu_text = f"""🔥 ━━━━━━━━━━━━━━━━━━━━ 🔥
-      <b>⚡ WELCOME TO MOMSHAD LIKE BOT ⚡</b>
-🔥 ━━━━━━━━━━━━━━━━━━━━ 🔥
+        menu_text = f"""╭━━━ <b>⚡ OFFICIAL MOMSHAD BOT ⚡</b> ━━━╮
+┃
+┃  👋 Welcome, <b>{user_name}</b>!
+┃  🚀 Instant Free & Paid Free Fire Likes.
+┃
+╰━━━━━━━━━━━━━━━━━━━━━━━━━━╯
 
-👋 Hello <b>{user_name}</b>! 
-Get lightning-fast Free & Paid likes for your Free Fire account instantly.
+💎 <b>Select an option from the panel below:</b>
+• 🎁 <b>Free Likes:</b> Instant daily delivery.
+• ⚡ <b>Paid Plans:</b> Heavy bulk likes at low cost.
+• 💳 <b>Wallet:</b> Add funds securely via UPI/QR.
 
-📌 <b>Choose an option below:</b>
-• Browse Free & Paid Like Plans.
-• Manage your wallet balance & profile.
-
-🔥 ━━━━━━━━━━━━━━━━━━━━ 🔥
-👑 <b>OWNER :</b> @Momshad_00"""
+────────────────────────────
+👑 <b>Owner & Admin :</b> @Momshad_00
+⭐ <i>Status : Active & Online 24/7</i>"""
         try:
             bot.edit_message_text(
                 menu_text,
@@ -177,13 +192,13 @@ Get lightning-fast Free & Paid likes for your Free Fire account instantly.
         btn_50 = InlineKeyboardButton("➕ ₹50", callback_data="add_50")
         btn_100 = InlineKeyboardButton("➕ ₹100", callback_data="add_100")
         btn_200 = InlineKeyboardButton("➕ ₹200", callback_data="add_200")
-        btn_back = InlineKeyboardButton("⬅ Back to Menu", callback_data="main_menu")
+        btn_back = InlineKeyboardButton("« Back to Main Menu", callback_data="main_menu")
         
         markup.add(btn_50, btn_100, btn_200, btn_back)
         
         try:
             bot.edit_message_text(
-                "💰 <b>ADD BALANCE MENU</b>\n──────────────────\nSelect the amount you want to add to your wallet:",
+                "╭━━━ 💳 <b>ADD WALLET BALANCE</b> ━━━╮\n┃\n┃  Select amount to top-up your wallet:\n┃\n╰━━━━━━━━━━━━━━━━━━━━━━╯",
                 chat_id=call.message.chat.id,
                 message_id=call.message.message_id,
                 parse_mode='HTML',
@@ -197,61 +212,74 @@ Get lightning-fast Free & Paid likes for your Free Fire account instantly.
         amt = amounts[call.data]
         bot.answer_callback_query(call.id, f"Rs. {amt} selected")
         
-        pay_text = f"""💰 <b>ADD ₹{amt} TO BALANCE</b>
-──────────────────
-1️⃣ Pay **₹{amt}** to the UPI ID below:
+        pay_text = f"""╭━━━ 💳 <b>TOP-UP ₹{amt}</b> ━━━╮
+┃
+┃  📦 <b>Amount:</b> ₹{amt}
+┃
+╰━━━━━━━━━━━━━━━━━━━━╯
+
+1️⃣ <b>Pay using the QR Code or UPI ID:</b>
 📌 UPI ID: <code>{YOUR_UPI_ID}</code>
 👤 Name: <b>Ariful Islam Khan</b>
 
-2️⃣ Send the 12-digit **UTR / Transaction ID** using this format:
+2️⃣ <b>Send Transaction UTR:</b>
 👉 <code>/utr [UTR Number] [Your UID] [Region]</code>
 
-3️⃣ Your balance will be updated after verification!"""
-        bot.send_message(call.message.chat.id, pay_text, parse_mode='HTML')
+✨ <i>Balance will be updated instantly after confirmation.</i>"""
+        
+        if QR_CODE_URL and QR_CODE_URL != "YOUR_QR_IMAGE_DIRECT_URL_HERE":
+            bot.send_photo(call.message.chat.id, QR_CODE_URL, caption=pay_text, parse_mode='HTML')
+        else:
+            bot.send_message(call.message.chat.id, pay_text, parse_mode='HTML')
         
     elif call.data == "my_profile":
         bot.answer_callback_query(call.id, "Loading profile...")
         user = call.from_user
-        profile_text = f"""👤 <b>YOUR PROFILE</b>
-──────────────────
-🆔 <b>User ID :</b> <code>{user.id}</code>
-📛 <b>Name :</b> {user.first_name}
-🔗 <b>Username :</b> @{user.username if user.username else 'None'}
-──────────────────"""
+        profile_text = f"""╭━━━ 👤 <b>USER PROFILE</b> ━━━╮
+┃
+┃  🆔 <b>Telegram ID:</b> <code>{user.id}</code>
+┃  📛 <b>Name:</b> {user.first_name}
+┃  🔗 <b>Username:</b> @{user.username if user.username else 'None'}
+┃
+╰━━━━━━━━━━━━━━━━━━━━╯"""
         bot.send_message(call.message.chat.id, profile_text, parse_mode='HTML')
 
     elif call.data == "support_menu":
         bot.answer_callback_query(call.id, "Opening support...")
-        support_text = f"""📞 <b>CUSTOMER SUPPORT</b>
-──────────────────
-Need help with payment or likes? Contact the owner directly:
-👑 <b>Owner:</b> @Momshad_00
-──────────────────"""
+        support_text = f"""╭━━━ 💬 <b>CUSTOMER SUPPORT</b> ━━━╮
+┃
+┃  Need assistance with orders or payments? 
+┃  Reach out to the admin directly:
+┃
+┃  👑 <b>Support Desk:</b> @Momshad_00
+┃
+╰━━━━━━━━━━━━━━━━━━━━━━╯"""
         bot.send_message(call.message.chat.id, support_text, parse_mode='HTML')
         
     elif call.data == "help_menu":
         bot.answer_callback_query(call.id, "Opening help...")
-        help_text = f"""🤖 <b>HELP MENU</b> 🤖
-──────────────────
-🔹 <code>/like {{region}} {{uid}}</code> - Send free likes
-🔹 <code>/utr {{utr}} {{uid}} {{region}}</code> - Submit payment UTR
-🔹 <code>/menu</code> - Open main panel buttons
-──────────────────"""
+        help_text = f"""╭━━━ 📖 <b>BOT COMMANDS GUIDE</b> ━━━╮
+┃
+┃  🔹 <code>/like [region] [uid]</code> - Get Free Likes
+┃  🔹 <code>/utr [utr] [uid] [region]</code> - Submit Payment
+┃  🔹 <code>/menu</code> - Open Interactive Panel
+┃
+╰━━━━━━━━━━━━━━━━━━━━━━╯"""
         bot.send_message(call.message.chat.id, help_text, parse_mode='HTML')
 
 @bot.message_handler(commands=['help'])
 def help_command(message):
-    help_text = f"""🤖 <b>MOMSHAD LIKE BOT HELP</b> 🤖
-──────────────────
-📌 <b>Commands :</b>
-🔹 <code>/like {{region}} {{uid}}</code> - Send free likes
-🔹 <code>/utr {{utr}} {{uid}} {{region}}</code> - Submit payment UTR
-🔹 <code>/menu</code> - Open interactive button panel
-
-👑 <b>Admin Commands (Owner Only) :</b>
-🔸 <code>/on</code> - Turn bot services ON
-🔸 <code>/off</code> - Turn bot services OFF
-──────────────────"""
+    help_text = f"""╭━━━ 📖 <b>HELP & COMMANDS</b> ━━━╮
+┃
+┃  🔹 <code>/like [region] [uid]</code> - Free Likes
+┃  🔹 <code>/utr [utr] [uid] [region]</code> - Submit UTR
+┃  🔹 <code>/menu</code> - Open Dashboard
+┃
+┃  <b>[Admin Commands]</b>
+┃  🔸 <code>/on</code> - Start Bot Services
+┃  🔸 <code>/off</code> - Stop Bot Services
+┃
+╰━━━━━━━━━━━━━━━━━━━━━━╯"""
     bot.reply_to(message, help_text, parse_mode='HTML')
 
 @bot.message_handler(commands=['utr'])
@@ -266,19 +294,20 @@ def handle_utr(message):
     region = args[3].lower()
     user = message.from_user
 
-    admin_msg = f"""💰 <b>NEW PAYMENT UTR RECEIVED!</b>
-──────────────────
-👤 <b>User Name :</b> {user.first_name}
-🆔 <b>Telegram ID :</b> <code>{user.id}</code>
-🔗 <b>Username :</b> @{user.username if user.username else 'None'}
-──────────────────
-💳 <b>UTR Number :</b> <code>{utr_number}</code>
-🎮 <b>Target UID :</b> <code>{uid}</code>
-🌍 <b>Region :</b> {region.upper()}
-──────────────────"""
+    admin_msg = f"""╭━━━ 💰 <b>NEW PAYMENT RECEIVED</b> ━━━╮
+┃
+┃  👤 <b>Name:</b> {user.first_name}
+┃  🆔 <b>ID:</b> <code>{user.id}</code>
+┃  🔗 <b>Username:</b> @{user.username if user.username else 'None'}
+┃
+┃  💳 <b>UTR:</b> <code>{utr_number}</code>
+┃  🎮 <b>UID:</b> <code>{uid}</code>
+┃  🌍 <b>Region:</b> {region.upper()}
+┃
+╰━━━━━━━━━━━━━━━━━━━━━━╯"""
 
     bot.send_message(ADMIN_ID, admin_msg, parse_mode='HTML')
-    bot.reply_to(message, "✅ <b>Your UTR has been submitted successfully!</b>\nYour account/balance will be updated after verification by the owner.", parse_mode='HTML')
+    bot.reply_to(message, "✅ <b>UTR Submitted Successfully!</b>\nYour payment is under verification by the admin.", parse_mode='HTML')
 
 @bot.message_handler(commands=['like'])
 def handle_like(message):
@@ -309,24 +338,28 @@ def handle_like(message):
         remaining = str(data.get('Remaining_requests', '0'))
 
         if int(likes_after) > int(likes_before) or int(likes_given) > 0:
-            reply_text = f"""🎉 <b>LIKE SUCCESSFUL</b> 👍
-──────────────────
-👑 <b>Name :</b> {name}
-🎮 <b>UID :</b> {uid}
-🌍 <b>Region :</b> {region.upper()}
-──────────────────
-❤️ <b>Likes Before :</b> {likes_before}
-💙 <b>Likes Given :</b> {likes_given}
-💚 <b>Likes After :</b> {likes_after}
-⚡ <b>Remaining Requests :</b> {remaining}"""
+            reply_text = f"""╭━━━ 🎉 <b>LIKE SUCCESSFUL</b> ━━━╮
+┃
+┃  👑 <b>Name:</b> {name}
+┃  🎮 <b>UID:</b> {uid}
+┃  🌍 <b>Region:</b> {region.upper()}
+┃
+┃  ❤️ <b>Before:</b> {likes_before}
+┃  💙 <b>Given:</b> {likes_given}
+┃  💚 <b>After:</b> {likes_after}
+┃  ⚡ <b>Remaining:</b> {remaining}
+┃
+╰━━━━━━━━━━━━━━━━━━━━━━╯"""
         else:
-            reply_text = f"""⚠️ <b>DAILY LIMIT REACHED</b>
-──────────────────
-👤 <b>NAME :</b> {name}
-🆔 <b>UID :</b> {uid}
-🌍 <b>SERVER :</b> {region.upper()}
-──────────────────
-📊 <b>STATUS :</b> 0 Likes Added"""
+            reply_text = f"""╭━━━ ⚠️ <b>LIMIT REACHED</b> ━━━╮
+┃
+┃  👤 <b>Name:</b> {name}
+┃  🆔 <b>UID:</b> {uid}
+┃  🌍 <b>Server:</b> {region.upper()}
+┃
+┃  📊 <b>Status:</b> 0 Likes Added
+┃
+╰━━━━━━━━━━━━━━━━━━━━━━╯"""
 
         bot.edit_message_text(reply_text, chat_id=sent_msg.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
 
@@ -335,4 +368,5 @@ def handle_like(message):
 
 if __name__ == '__main__':
     bot.infinity_polling(skip_pending=True)
+    
         
