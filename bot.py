@@ -349,16 +349,30 @@ Reach out to the admin directly:
         bot.send_message(call.message.chat.id, support_text, parse_mode='HTML')
 
 def process_free_like_uid(message):
-    uid = message.text.strip()
+    text = message.text.strip()
     user = message.from_user
-    region = "ind"
+    
+    if text.startswith('/like'):
+        parts = text.split()
+        if len(parts) >= 3:
+            region = parts[1].lower()
+            uid = parts[2]
+        elif len(parts) == 2:
+            region = "ind"
+            uid = parts[1]
+        else:
+            bot.reply_to(message, "❌ Invalid format! Please enter your UID correctly.")
+            return
+    else:
+        region = "ind"
+        uid = text
 
     if not uid.isdigit():
-        bot.reply_to(message, "❌ Invalid UID! Please enter numbers only. Try again with the button.")
+        bot.reply_to(message, "❌ Invalid UID! Please enter numbers only.")
         return
 
-    sent_msg = bot.reply_to(message, "⏳ Processing free likes...")
-    api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&server_name={region}"
+    sent_msg = bot.reply_to(message, "⏳ Processing your request...", parse_mode='HTML')
+    api_url = f"https://like-apii-one.vercel.app/like?region={region}&uid={uid}"
 
     try:
         headers = {'User-Agent': 'Mozilla/5.0'}
@@ -366,15 +380,28 @@ def process_free_like_uid(message):
         data = response.json()
 
         name = str(data.get('PlayerNickname', 'Unknown'))
-        likes_before = str(data.get('LikesbeforeCommand', '0'))
-        likes_given = str(data.get('LikesGivenByAPI', '0'))
-        likes_after = str(data.get('LikesafterCommand', '0'))
-        remaining = str(data.get('Remaining_requests', '0'))
+        likes_before = str(data.get('LikesBefore', '0'))
+        likes_given = str(data.get('LikesGiven', '0'))
+        likes_after = str(data.get('LikesAfter', '0'))
+        remaining = str(data.get('Remaining', '0'))
 
-        reply_text = f"""🎉 <b>FREE LIKE SUCCESSFUL</b>
+                if int(likes_after) > int(likes_before):
+            reply_text = f"""🎉 <b>LIKE SENT SUCCESSFULLY!</b>
 ━━━━━━━━━━━━━━━━━━
 👑 <b>Player Name:</b> {name}
-🎮 <b>UID:</b> <code>{uid}</code>
+🆔 <b>UID:</b> <code>{uid}</code>
+🌍 <b>Region:</b> {region.upper()}
+━━━━━━━━━━━━━━━━━━
+❤ <b>Before:</b> {likes_before}
+💙 <b>Given:</b> {likes_given}
+💚 <b>After:</b> {likes_after}
+━━━━━━━━━━━━━━━━━━
+⚡ <b>Remaining:</b> {remaining}"""
+        else:
+            reply_text = f"""⚠️ <b>LIMIT REACHED / ERROR</b>
+━━━━━━━━━━━━━━━━━━
+👑 <b>Player Name:</b> {name}
+🆔 <b>UID:</b> <code>{uid}</code>
 🌍 <b>Region:</b> {region.upper()}
 ━━━━━━━━━━━━━━━━━━
 ❤ <b>Before:</b> {likes_before}
@@ -384,18 +411,10 @@ def process_free_like_uid(message):
 ⚡ <b>Remaining:</b> {remaining}"""
 
         bot.edit_message_text(reply_text, chat_id=sent_msg.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
+
     except Exception as e:
         bot.edit_message_text(f"❌ <b>API Error:</b> {str(e)}", chat_id=sent_msg.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
-
-def process_paid_like_uid(message):
-    uid = message.text.strip()
-    user = message.from_user
-
-    if not uid.isdigit():
-        bot.reply_to(message, "❌ Invalid UID! Please enter numbers only.")
-        return
-
-    bot.reply_to(message, f"✅ UID <code>{uid}</code> received! Admin has been notified to send your 220+ likes.", parse_mode='HTML')
+        
     
     bot.send_message(
         ADMIN_ID,
