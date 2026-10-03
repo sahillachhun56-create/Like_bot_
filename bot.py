@@ -478,7 +478,6 @@ def handle_like(message):
         return
 
         sent_msg = bot.reply_to(message, "⏳ Processing your request...", parse_mode='HTML')
-
     api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&region={region}"
     try:
         response = requests.get(api_url)
@@ -519,12 +518,7 @@ def handle_like(message):
     except Exception as e:
         reply_text = f"❌ <b>API Error:</b> Could not process request."
 
-    bot.edit_message_text(
-        reply_text,
-        chat_id=sent_msg.chat.id,
-        message_id=sent_msg.message_id,
-        parse_mode='HTML'
-    )
+    bot.reply_to(message, reply_text, parse_mode='HTML')
 
 if __name__ == '__main__':
     bot.infinity_polling(skip_pending=True)
