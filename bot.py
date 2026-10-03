@@ -477,8 +477,9 @@ def handle_like(message):
         bot.reply_to(message, "❌ Invalid UID! Only numbers allowed.")
         return
 
- sent_msg = bot.reply_to(message, "⏳ Processing your request...", parse_mode='HTML')
-        api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&region={region}"
+     sent_msg = bot.reply_to(message, "⏳ Processing your request...", parse_mode='HTML')
+    
+    api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&region={region}"
     try:
         response = requests.get(api_url)
         data = response.json()
@@ -489,7 +490,7 @@ def handle_like(message):
         likes_after = str(data.get('LikesAfter', '0'))
         remaining = str(data.get('Remaining', '0'))
 
- if int(likes_after) > int(likes_before):
+        if int(likes_after) > int(likes_before):
             reply_text = (
                 "🎉 <b>LIKE SUCCESSFUL!</b> 👈\n"
                 "_________________________\n"
@@ -522,5 +523,7 @@ def handle_like(message):
 
 
 if __name__ == '__main__':
-    bot.infinity_polling(skip_pending=True)
+    init_db()
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+
     
