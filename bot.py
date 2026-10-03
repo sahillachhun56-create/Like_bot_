@@ -19,7 +19,7 @@ def run():
     t = Thread(target=run_flask)
     t.start()
 
-API_TOKEN = "8591551561:AAGSdBmgliVHF4rO6s-Piqs2G8M3S6GMgT0"  # Your Bot Token
+API_TOKEN = "8591551561:AAFmpzGWZyySZ9tLn_XGOYMtsFOUkNVtEHA"  # Your Bot Token
 bot = telebot.TeleBot(API_TOKEN)
 
 ADMIN_ID = 8380823727
@@ -485,5 +485,6 @@ def handle_like(message):
 if __name__ == '__main__':
     run()
     bot.infinity_polling(skip_pending=True)
+                    
     
                 
