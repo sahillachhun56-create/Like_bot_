@@ -184,7 +184,15 @@ def callback_query(call):
             pass
 
     elif call.data == "free_likes":
-        bot.answer_callback_query(call.id, "Coming soon!", show_alert=True)
+        bot.answer_callback_query(call.id)
+        bot.send_message(
+            call.message.chat.id,
+            "🎁 <b>FREE LIKES GENERATOR</b>\n\n"
+            "To send free likes, use the command below:\n"
+            "<code>/like [UID] [Region]</code>\n\n"
+            "<i>Example:</i> <code>/like 123456789 ind</code>",
+            parse_mode='HTML'
+        )
 
     elif call.data == "paid_likes":
         markup = InlineKeyboardMarkup(row_width=1)
@@ -240,15 +248,15 @@ def callback_query(call):
                 parse_mode='HTML'
             )
         else:
-            bot.answer_callback_query(call.id, "❌ Insufficient Balance!", show_alert=True)
+            bot.answer_callback_query(call.id, "💳 Please pay via QR Code below!", show_alert=True)
             pay_text = (
                 "❌ <b>Insufficient Balance in Wallet!</b>\n\n"
-                f"You can pay via UPI QR below and submit your UTR.\n\n"
-                f"🌐 <b>Scan QR Code above or Pay to UPI ID:</b>\n"
+                f"Please pay ₹{package_price} via UPI QR below and send your UTR number.\n\n"
+                f"🌐 <b>Scan QR Code or Pay to UPI ID:</b>\n"
                 f"🆔 <b>UPI ID:</b> <code>{YOUR_UPI_ID}</code>\n"
                 f"👤 <b>Name:</b> Ariful Islam\n\n"
                 f"2️⃣ <b>Send Transaction UTR / Ref Number:</b>\n"
-                f"<code>utr [UTR number] [Your UID] [Region]</code>"
+                f"<code>utr [UTR number]</code>"
             )
             bot.send_photo(call.message.chat.id, QR_CODE_URL, caption=pay_text, parse_mode='HTML')
 
@@ -468,6 +476,7 @@ def handle_like(message):
 if __name__ == '__main__':
     run()
     bot.infinity_polling(skip_pending=True)
+    
     
                      
             
