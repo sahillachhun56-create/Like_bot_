@@ -514,6 +514,10 @@ def handle_like(message):
                 f"🆔 <b>UID :</b> {uid}\n"
                 f"🌍 <b>SERVER :</b> {region.upper()}\n"
                 f"_________________________\n"
+                f"❤️ <b>Likes Before :</b> {likes_before}\n"
+                f"💙 <b>Likes Given :</b> {likes_given}\n"
+                f"💚 <b>Likes After :</b> {likes_after}\n"
+                f"⚡ <b>Remaining :</b> {remaining}\n"
                 f"📊 <b>STATUS :</b> {likes_given} Likes Added\n"
                 f"✏️ <b>REASON :</b> Daily Max Limit Reached\n"
                 f"_________________________\n"
@@ -524,6 +528,7 @@ def handle_like(message):
         reply_text = f"❌ <b>API Error:</b> Could not process request."
 
     bot.edit_message_text(reply_text, chat_id=sent_msg.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
+
 
 
 
