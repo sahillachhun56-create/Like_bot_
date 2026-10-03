@@ -478,7 +478,7 @@ def handle_like(message):
         return
 
     sent_msg = bot.reply_to(message, "⏳ Processing your request...", parse_mode='HTML')
-    api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&region={region}"
+    api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&server_name={region}"
     try:
         response = requests.get(api_url)
         data = response.json()
