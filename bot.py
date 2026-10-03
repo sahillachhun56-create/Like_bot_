@@ -19,12 +19,13 @@ def run():
     t = Thread(target=run_flask)
     t.start()
 
-API_TOKEN = "8591551561:AAFmpzGWZyySZ9tLn_XGOYMtsFOUkNVtEHA"  # Your Bot Token
+API_TOKEN = "8591551561:AAEuvS55iN3ESHOoPm2X_pCXfSmqiEIlzWo"  # Your Bot Token
 bot = telebot.TeleBot(API_TOKEN)
 
 ADMIN_ID = 8380823727
 YOUR_UPI_ID = "orthodontist@airtel"
-QR_CODE_URL = "https://qrserver.com/v1/create-qr-code/?size=300x300&data=upi://pay?pa=orthodontist@airtel&pn=Ariful%20Islam"
+YOUR_NAME = "Ariful Islam Khan"
+QR_CODE_URL = "https://i.ibb.co/6R2Z89W/1000020875.png"
 
 bot_active = True
 
@@ -227,7 +228,9 @@ def callback_query(call):
                 f"🆔 <b>User ID:</b> <code>{user.id}</code>\n"
                 f"📦 <b>Package:</b> {item_name}\n"
                 f"💵 <b>Price Paid:</b> ₹{package_price}\n"
-                f"💰 <b>User's Remaining Balance:</b> ₹{new_bal}"
+                f"💰 <b>User's Remaining Balance:</b> ₹{new_bal}\n\n"
+                f"👉 <b>To deliver likes, use command:</b>\n"
+                f"<code>/like [Region] [UID]</code>"
             )
             try:
                 bot.send_message(ADMIN_ID, admin_notification, parse_mode='HTML')
@@ -241,20 +244,21 @@ def callback_query(call):
                 f"📦 Package: <b>220 Likes</b>\n"
                 f"💵 Price: <b>₹10</b>\n"
                 f"💰 Your Wallet Balance: <b>₹{new_bal}</b>\n\n"
-                f"👉 <b>To deliver likes, use command:</b>\n"
-                f"<code>/like [Region] [UID]</code>",
+                f"👉 <b>To deliver likes, please provide your UID using:</b>\n"
+                f"<code>/order [Region] [UID]</code>",
                 parse_mode='HTML'
             )
         else:
             bot.answer_callback_query(call.id)
             pay_text = (
                 "❌ <b>Insufficient Balance in Wallet!</b>\n\n"
-                f"Please pay ₹{package_price} via UPI QR below and send your UTR number.\n\n"
+                f"Please pay ₹{package_price} via QR Code below, then submit your UTR and UID details.\n\n"
                 f"🌐 <b>Scan QR Code or Pay to UPI ID:</b>\n"
                 f"🆔 <b>UPI ID:</b> <code>{YOUR_UPI_ID}</code>\n"
-                f"👤 <b>Name:</b> Ariful Islam\n\n"
-                f"2️⃣ <b>Send Transaction UTR / Ref Number:</b>\n"
-                f"<code>utr [UTR number]</code>"
+                f"👤 <b>Name:</b> {YOUR_NAME}\n\n"
+                f"2️⃣ <b>Submit Details Format:</b>\n"
+                f"<code>utr [UTR Number] [Region] [UID]</code>\n"
+                f"<i>Example:</i> <code>utr 123456789 ind 1772894853</code>"
             )
             bot.send_photo(call.message.chat.id, QR_CODE_URL, caption=pay_text, parse_mode='HTML')
 
@@ -288,10 +292,10 @@ def callback_query(call):
             f"💳 <b>Current Balance: ₹{balance}</b>\n\n"
             f"🌐 <b>Scan QR Code or Pay to UPI ID:</b>\n"
             f"🆔 <b>UPI ID:</b> <code>{YOUR_UPI_ID}</code>\n"
-            f"👤 <b>Name:</b> Ariful Islam\n\n"
-            f"2️⃣ <b>Send Transaction UTR / Ref Number:</b>\n"
-            f"Send your UTR by typing:\n"
-            f"<code>utr [UTR number]</code>"
+            f"👤 <b>Name:</b> {YOUR_NAME}\n\n"
+            f"2️⃣ <b>Send Transaction UTR / Transfer ID:</b>\n"
+            f"Type and send:\n"
+            f"<code>utr [UTR Number]</code>"
         )
         bot.send_photo(call.message.chat.id, QR_CODE_URL, caption=pay_caption, parse_mode='HTML')
 
@@ -340,25 +344,59 @@ def callback_query(call):
 def handle_utr(message):
     if not bot_active and message.from_user.id != ADMIN_ID:
         return
-    args = message.text.split()
+    args = message.text.split(maxsplit=3)
     if len(args) < 2:
-        bot.reply_to(message, "❌ Correct format: <code>utr [UTR number]</code>", parse_mode='HTML')
+        bot.reply_to(message, "❌ Correct format: <code>utr [UTR Number] [Region] [UID]</code>", parse_mode='HTML')
         return
+    
     user = message.from_user
     utr_number = args[1]
+    region = args[2] if len(args) > 2 else "Not Provided"
+    uid = args[3] if len(args) > 3 else "Not Provided"
     
     admin_msg = (
-        f"🔔 <b>NEW PAYMENT UTR SUBMITTED!</b>\n"
+        f"🔔 <b>NEW PAYMENT & UID SUBMITTED!</b>\n"
         f"━━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"👤 <b>User:</b> {user.first_name}\n"
-        f"🆔 <b>User ID:</b> <code>{user.id}</code>\n"
+        f"👤 <b>User Name:</b> {user.first_name}\n"
+        f"🆔 <b>User Telegram ID:</b> <code>{user.id}</code>\n"
         f"🔗 <b>Username:</b> @{user.username if user.username else 'None'}\n"
-        f"🎟️ <b>UTR Number:</b> <code>{utr_number}</code>\n\n"
+        f"🎟️ <b>UTR / Transfer ID:</b> <code>{utr_number}</code>\n"
+        f"🌍 <b>Game Region:</b> {region.upper()}\n"
+        f"🎮 <b>Game UID:</b> <code>{uid}</code>\n\n"
         f"👉 <b>To add balance, send command:</b>\n"
-        f"<code>/addbalance {user.id} [Amount]</code>"
+        f"<code>/addbalance {user.id} [Amount]</code>\n"
+        f"👉 <b>To send likes, use command:</b>\n"
+        f"<code>/like {region} {uid}</code>"
     )
     bot.send_message(ADMIN_ID, admin_msg, parse_mode='HTML')
-    bot.reply_to(message, "✅ Your UTR has been submitted to the admin for verification!")
+    bot.reply_to(message, "✅ Your UTR and UID have been successfully submitted to the admin!")
+
+@bot.message_handler(commands=['order'])
+def handle_order_uid(message):
+    if not bot_active and message.from_user.id != ADMIN_ID:
+        return
+    args = message.text.split()
+    if len(args) < 3:
+        bot.reply_to(message, "❌ Correct format: <code>/order [Region] [UID]</code>", parse_mode='HTML')
+        return
+    
+    user = message.from_user
+    region = args[1]
+    uid = args[2]
+    
+    admin_msg = (
+        f"🔔 <b>NEW LIKES ORDER SUBMITTED!</b>\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"👤 <b>User Name:</b> {user.first_name}\n"
+        f"🆔 <b>User Telegram ID:</b> <code>{user.id}</code>\n"
+        f"🔗 <b>Username:</b> @{user.username if user.username else 'None'}\n"
+        f"🌍 <b>Game Region:</b> {region.upper()}\n"
+        f"🎮 <b>Game UID:</b> <code>{uid}</code>\n\n"
+        f"👉 <b>To send likes, use command:</b>\n"
+        f"<code>/like {region} {uid}</code>"
+    )
+    bot.send_message(ADMIN_ID, admin_msg, parse_mode='HTML')
+    bot.reply_to(message, "✅ Your UID has been received! Admin will process your likes shortly.")
 
 @bot.message_handler(commands=['addbalance'])
 def add_balance_admin(message):
@@ -446,7 +484,7 @@ def handle_like(message):
         likes_after = str(data.get('LikesafterCommand', '0'))
         remaining = str(data.get('Remaining_requests', '0'))
         
-        if int(likes_after) > int(likes_before) or int(likes_given) > 0:
+                if int(likes_after) > int(likes_before) or int(likes_given) > 0:
             reply_text = (
                 "🎉 <b>LIKE SUCCESSFUL!</b> 👍\n"
                 "━━━━━━━━━━━━━━━━━━━━━━━\n"
@@ -485,6 +523,7 @@ def handle_like(message):
 if __name__ == '__main__':
     run()
     bot.infinity_polling(skip_pending=True)
+    
                     
     
                 
