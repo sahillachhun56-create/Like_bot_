@@ -484,12 +484,14 @@ def handle_like(message):
         response = requests.get(api_url, headers=headers)
         data = response.json()
 
+        # आपके वर्किंग बोट के हिसाब से एकदम सटीक डेटा फेचिंग
         name = str(data.get('PlayerNickname') or data.get('name') or 'Unknown')
         likes_before = str(data.get('LikesBefore') or data.get('before') or '0')
         likes_given = str(data.get('LikesGiven') or data.get('given') or '0')
         likes_after = str(data.get('LikesAfter') or data.get('after') or '0')
         remaining = str(data.get('Remaining') or data.get('remaining') or '0')
 
+        # अगर लाइक्स बढ़े हैं या API ने सक्सेस रिस्पॉन्स दिया है
         if int(likes_after) > int(likes_before) or int(likes_given) > 0:
             reply_text = (
                 f"🎉 <b>LIKE SUCCESSFUL!</b> 👈\n"
@@ -528,6 +530,7 @@ def handle_like(message):
         reply_text = f"❌ <b>API Error:</b> Could not process request."
 
     bot.edit_message_text(reply_text, chat_id=sent_msg.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
+
 
 
 
