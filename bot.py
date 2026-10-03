@@ -516,7 +516,7 @@ if int(likes_after) > int(likes_before):
             f"💚 <b>Likes After :</b> {likes_after}\n"
             f"⚡ <b>Remaining :</b> {remaining}\n"
         )
-    except Exception as e:
+    'except' Exception as e:
         reply_text = f"❌ <b>API Error:</b> Could not process request. ({e})"
 
     bot.edit_message_text(
