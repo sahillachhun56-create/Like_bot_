@@ -252,7 +252,7 @@ def callback_query(call):
             bot.answer_callback_query(call.id)
             pay_text = (
                 "❌ <b>Insufficient Balance in Wallet!</b>\n\n"
-                f"Please pay ₹{package_price} via QR Code below, then submit your UTR and UID details.\n\n"
+                f"Please pay ₹{package_price} via QR Code or direct UPI ID below, then submit your UTR and UID details.\n\n"
                 f"🌐 <b>Scan QR Code or Pay to UPI ID:</b>\n"
                 f"🆔 <b>UPI ID:</b> <code>{YOUR_UPI_ID}</code>\n"
                 f"👤 <b>Name:</b> {YOUR_NAME}\n\n"
@@ -260,7 +260,10 @@ def callback_query(call):
                 f"<code>utr [UTR Number] [Region] [UID]</code>\n"
                 f"<i>Example:</i> <code>utr 123456789 ind 1772894853</code>"
             )
-            bot.send_photo(call.message.chat.id, QR_CODE_URL, caption=pay_text, parse_mode='HTML')
+            try:
+                bot.send_photo(call.message.chat.id, QR_CODE_URL, caption=pay_text, parse_mode='HTML')
+            except Exception:
+                bot.send_message(call.message.chat.id, pay_text, parse_mode='HTML')
 
     elif call.data == "add_balance":
         markup = InlineKeyboardMarkup(row_width=3)
@@ -297,7 +300,10 @@ def callback_query(call):
             f"Type and send:\n"
             f"<code>utr [UTR Number]</code>"
         )
-        bot.send_photo(call.message.chat.id, QR_CODE_URL, caption=pay_caption, parse_mode='HTML')
+        try:
+            bot.send_photo(call.message.chat.id, QR_CODE_URL, caption=pay_caption, parse_mode='HTML')
+        except Exception:
+            bot.send_message(call.message.chat.id, pay_caption, parse_mode='HTML')
 
     elif call.data == "my_orders":
         bot.answer_callback_query(call.id)
@@ -360,7 +366,7 @@ def handle_utr(message):
         f"👤 <b>User Name:</b> {user.first_name}\n"
         f"🆔 <b>User Telegram ID:</b> <code>{user.id}</code>\n"
         f"🔗 <b>Username:</b> @{user.username if user.username else 'None'}\n"
-        f"🎟️ <b>UTR / Transfer ID:</b> <code>{utr_number}</code>\n"
+        f"🎟 <b>UTR / Transfer ID:</b> <code>{utr_number}</code>\n"
         f"🌍 <b>Game Region:</b> {region.upper()}\n"
         f"🎮 <b>Game UID:</b> <code>{uid}</code>\n\n"
         f"👉 <b>To add balance, send command:</b>\n"
@@ -497,32 +503,33 @@ def handle_like(message):
                 f"💚 <b>Likes After :</b> {likes_after}\n"
                 f"⚡ <b>Remaining :</b> {remaining}"
             )
-        else:
-            reply_text = (
-                "⚠️ <b>API RESPONSE / LIMIT REACHED!</b>\n"
-                "━━━━━━━━━━━━━━━━━━━━━━━\n"
+       else:
+          reply_text = (
+              "⚠️ <b>API RESPONSE / LIMIT REACHED!</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━\n"
                 f"👑 <b>Name :</b> {name}\n"
                 f"🎮 <b>UID :</b> {uid}\n"
                 f"🌍 <b>Region :</b> {region.upper()}\n"
-                "━━━━━━━━━━━━━━━━━━━━━━━\n"
-                f"❤️ <b>Likes Before :</b> {likes_before}\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"❤️️ <b>Likes Before :</b> {likes_before}\n"
                 f"💙 <b>Likes Given :</b> {likes_given}\n"
                 f"💚 <b>Likes After :</b> {likes_after}\n"
                 f"⚡ <b>Remaining :</b> {remaining}"
-            )
-    except Exception as e:
-        reply_text = f"❌ <b>API Error:</b> Could not process request. ({e})"
+          )
+        except Exception as e:
+            reply_text = f"❌ <b>API Error:</b> Could not process request. ({e})"
 
-    bot.edit_message_text(
-        reply_text,
-        chat_id=sent_msg.chat.id,
-        message_id=sent_msg.message_id,
-        parse_mode='HTML'
-    )
+        bot.edit_message_text(
+            reply_text,
+           chat_id=sent_msg.chat.id,
+            message_id=sent_msg.message_id,
+            parse_mode='HTML'
+        )
 
-if __name__ == '__main__':
-    run()
-    bot.infinity_polling(skip_pending=True)
+    if __name__ == '__main__':
+        run()
+        bot.infinity_polling(skip_pending=True)
+
     
                     
     
