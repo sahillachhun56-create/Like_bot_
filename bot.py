@@ -489,32 +489,32 @@ def handle_like(message):
         likes_given = str(data.get('LikesGivenByAPI', '0'))
         likes_after = str(data.get('LikesafterCommand', '0'))
         remaining = str(data.get('Remaining_requests', '0'))
-        
-        if int(likes_after) > int(likes_before) or int(likes_given) > 0:
-            reply_text = (
-                "🎉 <b>LIKE SUCCESSFUL!</b> 👍\n"
-                "━━━━━━━━━━━━━━━━━━━━━━━\n"
-                f"👑 <b>Name :</b> {name}\n"
-                f"🎮 <b>UID :</b> {uid}\n"
-                f"🌍 <b>Region :</b> {region.upper()}\n"
-                "━━━━━━━━━━━━━━━━━━━━━━━\n"
-                f"❤️ <b>Likes Before :</b> {likes_before}\n"
-                f"💙 <b>Likes Given :</b> {likes_given}\n"
-                f"💚 <b>Likes After :</b> {likes_after}\n"
-                f"⚡ <b>Remaining :</b> {remaining}"
-            )
-        
+  
+   if int(likes_after) > int(likes_before):
         reply_text = (
-                "⚠️ / LIMIT REACHED!</b>\n"
-            "━━━━━━━━━━━━━━━━━━━━━━━\n"
-                f"👑 <b>Name :</b> {name}\n"
-                f"🎮 <b>UID :</b> {uid}\n"
-                f"🌍 <b>Region :</b> {region.upper()}\n"
-            "━━━━━━━━━━━━━━━━━━━━━━━\n"
-                f"❤️️ <b>Likes Before :</b> {likes_before}\n"
-                f"💙 <b>Likes Given :</b> {likes_given}\n"
-                f"💚 <b>Likes After :</b> {likes_after}\n"
-                f"⚡ <b>Remaining :</b> {remaining}"
+            "🎉 <b>LIKE SUCCESSFUL!</b> 👈\n"
+            "_________________________\n"
+            f"👑 <b>Name :</b> {name}\n"
+            f"🎮 <b>UID :</b> {uid}\n"
+            f"🌍 <b>Region :</b> {region.upper()}\n"
+            "_________________________\n"
+            f"❤️ <b>Likes Before :</b> {likes_before}\n"
+            f"💙 <b>Likes Given :</b> {likes_given}\n"
+            f"💚 <b>Likes After :</b> {likes_after}\n"
+            f"⚡ <b>Remaining :</b> {remaining}\n"
+        )
+    else:
+        reply_text = (
+            "⚠️ <b>LIMIT REACHED!</b>\n"
+            "_________________________\n"
+            f"👑 <b>Name :</b> {name}\n"
+            f"🎮 <b>UID :</b> {uid}\n"
+            f"🌍 <b>Region :</b> {region.upper()}\n"
+            "_________________________\n"
+            f"❤️ <b>Likes Before :</b> {likes_before}\n"
+            f"💙 <b>Likes Given :</b> {likes_given}\n"
+            f"💚 <b>Likes After :</b> {likes_after}\n"
+            f"⚡ <b>Remaining :</b> {remaining}\n"
         )
     except Exception as e:
         reply_text = f"❌ <b>API Error:</b> Could not process request. ({e})"
