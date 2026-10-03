@@ -479,17 +479,17 @@ def handle_like(message):
 
     sent_msg = bot.reply_to(message, "⏳ Processing your request...", parse_mode='HTML')
     api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&server_name={region}"
-    try:
+        try:
         response = requests.get(api_url)
         data = response.json()
 
-        name = str(data.get('PlayerNickname', 'Unknown'))
-        likes_before = str(data.get('LikesBefore', '0'))
-        likes_given = str(data.get('LikesGiven', '0'))
-        likes_after = str(data.get('LikesAfter', '0'))
-        remaining = str(data.get('Remaining', '0'))
+        name = str(data.get('PlayerNickname') or data.get('name') or 'Unknown')
+        likes_before = str(data.get('LikesBefore') or data.get('before') or '0')
+        likes_given = str(data.get('LikesGiven') or data.get('given') or '0')
+        likes_after = str(data.get('LikesAfter') or data.get('after') or '0')
+        remaining = str(data.get('Remaining') or data.get('remaining') or '0')
 
-        if int(likes_after) > int(likes_before):
+        if int(likes_after) > int(likes_before) or int(likes_given) > 0:
             reply_text = (
                 "🎉 <b>LIKE SUCCESSFUL!</b> 👈\n"
                 "_________________________\n"
@@ -519,6 +519,7 @@ def handle_like(message):
         reply_text = f"❌ <b>API Error:</b> Could not process request."
 
     bot.reply_to(message, reply_text, parse_mode='HTML')
+
 
 
 if __name__ == '__main__':
