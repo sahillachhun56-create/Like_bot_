@@ -478,7 +478,7 @@ def handle_like(message):
         return
 
         sent_msg = bot.reply_to(message, "⏳ Processing your request...", parse_mode='HTML')
-    api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&region={region}"
+        api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&region={region}"
     try:
         response = requests.get(api_url)
         data = response.json()
@@ -519,6 +519,7 @@ def handle_like(message):
         reply_text = f"❌ <b>API Error:</b> Could not process request."
 
     bot.reply_to(message, reply_text, parse_mode='HTML')
+
 
 if __name__ == '__main__':
     bot.infinity_polling(skip_pending=True)
