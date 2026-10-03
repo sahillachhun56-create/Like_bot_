@@ -19,7 +19,7 @@ def run():
     t = Thread(target=run_flask)
     t.start()
 
-API_TOKEN = "8591551561:AAEhZNfL2Ijj44HsPHGQ2GOVuTp8qReZBQY" # Your Bot Token
+API_TOKEN = "8591551561:AAGSdBmgliVHF4rO6s-Piqs2G8M3S6GMgT0"  # Your Bot Token
 bot = telebot.TeleBot(API_TOKEN)
 
 ADMIN_ID = 8380823727
@@ -188,9 +188,9 @@ def callback_query(call):
         bot.send_message(
             call.message.chat.id,
             "🎁 <b>FREE LIKES GENERATOR</b>\n\n"
-            "To send free likes, use the command below:\n"
-            "<code>/like [UID] [Region]</code>\n\n"
-            "<i>Example:</i> <code>/like 123456789 ind</code>",
+            "To send free likes, use the command format below:\n"
+            "<code>/like [Region] [UID]</code>\n\n"
+            "<i>Example:</i> <code>/like ind 1772894853</code>",
             parse_mode='HTML'
         )
 
@@ -219,7 +219,6 @@ def callback_query(call):
             add_order_to_db(user.id, item_name, package_price, "Paid")
             new_bal = get_user_balance(user.id)
             
-            # --- ADMIN NOTIFICATION FOR SUCCESSFUL PURCHASE ---
             admin_notification = (
                 "🔔 <b>NEW LIKES PACKAGE PURCHASED!</b>\n"
                 "━━━━━━━━━━━━━━━━━━━━━━━\n"
@@ -234,9 +233,8 @@ def callback_query(call):
                 bot.send_message(ADMIN_ID, admin_notification, parse_mode='HTML')
             except Exception:
                 pass
-            # ------------------------------------------------
             
-            bot.answer_callback_query(call.id, "✅ Purchase Successful!", show_alert=True)
+            bot.answer_callback_query(call.id, "✅ Purchase Successful!")
             bot.send_message(
                 call.message.chat.id,
                 f"💳 <b>PAYMENT SUCCESSFUL!</b>\n\n"
@@ -244,11 +242,11 @@ def callback_query(call):
                 f"💵 Price: <b>₹10</b>\n"
                 f"💰 Your Wallet Balance: <b>₹{new_bal}</b>\n\n"
                 f"👉 <b>To deliver likes, use command:</b>\n"
-                f"<code>/like [UID] [Region]</code>",
+                f"<code>/like [Region] [UID]</code>",
                 parse_mode='HTML'
             )
         else:
-            bot.answer_callback_query(call.id, "💳 Please pay via QR Code below!", show_alert=True)
+            bot.answer_callback_query(call.id)
             pay_text = (
                 "❌ <b>Insufficient Balance in Wallet!</b>\n\n"
                 f"Please pay ₹{package_price} via UPI QR below and send your UTR number.\n\n"
@@ -403,7 +401,7 @@ def help_command(message):
         return
     help_text = (
         "🛠️ <b>HELP & COMMANDS</b>\n\n"
-        "<code>/like [uid] [region]</code> - Free Fire Like Bot\n"
+        "<code>/like [region] [uid]</code> - Free Fire Like Bot\n"
         "<code>/addbalance [user_id] [amount]</code> - Add balance\n"
         "<code>/broadcast [text]</code> - Send message to all users\n"
         "<code>/on</code> / <code>/off</code> - Toggle bot service"
@@ -417,51 +415,62 @@ def handle_like(message):
         return
     args = message.text.split()
     if len(args) < 3:
-        bot.reply_to(message, "❌ Correct format: <code>/like [UID] [Region]</code>", parse_mode='HTML')
+        bot.reply_to(
+            message,
+            "❌ <b>Incorrect Command Structure!</b>\n"
+            "📌 <b>Correct Format :</b> <code>/like {region} {uid}</code>\n"
+            "💡 <b>Example :</b> <code>/like ind 1772894853</code>\n\n"
+            f"👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>\n"
+            f"🚀 <b>OWNER :</b> @Momshad_00",
+            parse_mode='HTML'
+        )
         return
-    uid = args[1]
-    region = args[2].lower()
+
+    region = args[1].lower()
+    uid = args[2]
 
     if not uid.isdigit():
         bot.reply_to(message, "❌ Invalid UID! Only numbers allowed.")
         return
 
-    sent_msg = bot.reply_to(message, "🔍 Processing your like request...", parse_mode='HTML')
+    sent_msg = bot.reply_to(message, "⏳ Processing your request...", parse_mode='HTML')
     
-    api_url = f"https://api1-one.vercel.app/like?uid={uid}&region={region}"
+    api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&server_name={region}"
     try:
         response = requests.get(api_url, headers={'User-Agent': 'Mozilla/5.0'})
         data = response.json()
         
-        likes_before = str(data.get('LikesBefore', 'N/A'))
-        likes_given = str(data.get('LikesGivenByAPI', 'N/A'))
-        likes_after = str(data.get('LikesAfter', 'N/A'))
-        player_name = str(data.get('PlayerNickname', 'Player'))
-        remaining = str(data.get('Remaining', 'N/A'))
+        name = str(data.get('PlayerNickname', 'Unknown'))
+        likes_before = str(data.get('LikesbeforeCommand', '0'))
+        likes_given = str(data.get('LikesGivenByAPI', '0'))
+        likes_after = str(data.get('LikesafterCommand', '0'))
+        remaining = str(data.get('Remaining_requests', '0'))
         
-        if int(likes_given) > 0:
+        if int(likes_after) > int(likes_before) or int(likes_given) > 0:
             reply_text = (
-                "<b>🔥 LIKE SENT SUCCESSFULLY!</b>\n"
+                "🎉 <b>LIKE SUCCESSFUL!</b> 👍\n"
                 "━━━━━━━━━━━━━━━━━━━━━━━\n"
-                f"👤 <b>Player Name:</b> {player_name}\n"
-                f"🆔 <b>UID:</b> <code>{uid}</code>\n"
-                f"🌍 <b>Region:</b> <code>{region.upper()}</code>\n\n"
-                f"💙 <b>Before:</b> {likes_before}\n"
-                f"💚 <b>Given:</b> {likes_given}\n"
-                f"💙 <b>After:</b> {likes_after}\n"
-                f"⚡ <b>Remaining:</b> {remaining}"
+                f"👑 <b>Name :</b> {name}\n"
+                f"🎮 <b>UID :</b> {uid}\n"
+                f"🌍 <b>Region :</b> {region.upper()}\n"
+                "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"❤️ <b>Likes Before :</b> {likes_before}\n"
+                f"💙 <b>Likes Given :</b> {likes_given}\n"
+                f"💚 <b>Likes After :</b> {likes_after}\n"
+                f"⚡ <b>Remaining :</b> {remaining}"
             )
         else:
             reply_text = (
-                "<b>⚠️ LIMIT REACHED / ERROR!</b>\n"
+                "⚠️ <b>API RESPONSE / LIMIT REACHED!</b>\n"
                 "━━━━━━━━━━━━━━━━━━━━━━━\n"
-                f"👤 <b>Player Name:</b> {player_name}\n"
-                f"🆔 <b>UID:</b> <code>{uid}</code>\n"
-                f"🌍 <b>Region:</b> <code>{region.upper()}</code>\n\n"
-                f"💙 <b>Before:</b> {likes_before}\n"
-                f"💚 <b>Given:</b> {likes_given}\n"
-                f"💙 <b>After:</b> {likes_after}\n"
-                f"⚡ <b>Remaining:</b> {remaining}"
+                f"👑 <b>Name :</b> {name}\n"
+                f"🎮 <b>UID :</b> {uid}\n"
+                f"🌍 <b>Region :</b> {region.upper()}\n"
+                "━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"❤️ <b>Likes Before :</b> {likes_before}\n"
+                f"💙 <b>Likes Given :</b> {likes_given}\n"
+                f"💚 <b>Likes After :</b> {likes_after}\n"
+                f"⚡ <b>Remaining :</b> {remaining}"
             )
     except Exception as e:
         reply_text = f"❌ <b>API Error:</b> Could not process request. ({e})"
@@ -476,4 +485,5 @@ def handle_like(message):
 if __name__ == '__main__':
     run()
     bot.infinity_polling(skip_pending=True)
+    
                 
