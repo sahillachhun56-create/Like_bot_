@@ -258,7 +258,7 @@ def callback_query(call):
                 f"👤 <b>Name:</b> {YOUR_NAME}\n\n"
                 f"2️⃣ <b>Submit Details Format:</b>\n"
                 f"<code>utr [UTR Number] [Region] [UID]</code>\n"
-                f"<i>Example:</i> <code>utr 123456789 ind 1772894853</code>"
+                f"<i>Example:</i> <code>/utr 123456789 ind 1772894853</code>"
             )
             try:
                 bot.send_photo(call.message.chat.id, QR_CODE_URL, caption=pay_text, parse_mode='HTML')
