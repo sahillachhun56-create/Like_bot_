@@ -19,7 +19,7 @@ def run():
     t = Thread(target=run_flask)
     t.start()
 
-API_TOKEN = "8591551561:AAHWb3teWr6sDy1poH4H4irCLWQRKB69h7A"  # Your Bot Token
+API_TOKEN = "8591551561:AAEY8lEj4DmYf_2WNHmTNgku7-dbUMTguV0"  # Your Bot Token
 bot = telebot.TeleBot(API_TOKEN)
 
 ADMIN_ID = 8380823727
