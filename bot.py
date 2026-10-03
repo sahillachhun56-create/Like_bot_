@@ -523,7 +523,10 @@ def handle_like(message):
         bot.edit_message_text(f"❌ <b>API Error:</b> {str(e)}", chat_id=sent_msg.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
 
 if __name__ == '__main__':
+    run()
     bot.infinity_polling(skip_pending=True)
+    
+    
     
 
     
