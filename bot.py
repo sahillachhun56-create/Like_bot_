@@ -505,7 +505,7 @@ def handle_like(message):
             )
         
         reply_text = (
-                "⚠️ <b>API RESPONSE / LIMIT REACHED!</b>\n"
+                "⚠️ / LIMIT REACHED!</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━\n"
                 f"👑 <b>Name :</b> {name}\n"
                 f"🎮 <b>UID :</b> {uid}\n"
