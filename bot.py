@@ -6,7 +6,7 @@ from flask import Flask
 from threading import Thread
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-app = Flask('')
+app = Flask(__name__)
 
 @app.route('/')
 def home():
