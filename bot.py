@@ -490,8 +490,8 @@ def handle_like(message):
         likes_after = str(data.get('LikesafterCommand', '0'))
         remaining = str(data.get('Remaining_requests', '0'))
   
-   if int(likes_after) > int(likes_before):
-        reply_text = (
+    if int(likes_after) > int(likes_before):
+         reply_text = (
             "🎉 <b>LIKE SUCCESSFUL!</b> 👈\n"
             "_________________________\n"
             f"👑 <b>Name :</b> {name}\n"
@@ -504,7 +504,7 @@ def handle_like(message):
             f"⚡ <b>Remaining :</b> {remaining}\n"
         )
     else:
-        reply_text = (
+         reply_text = (
             "⚠️ <b>LIMIT REACHED!</b>\n"
             "_________________________\n"
             f"👑 <b>Name :</b> {name}\n"
