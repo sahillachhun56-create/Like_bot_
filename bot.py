@@ -477,8 +477,7 @@ def handle_like(message):
         bot.reply_to(message, "❌ Invalid UID! Only numbers allowed.")
         return
 
-     sent_msg = bot.reply_to(message, "⏳ Processing your request...", parse_mode='HTML')
-    
+    sent_msg = bot.reply_to(message, "⏳ Processing your request...", parse_mode='HTML')
     api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&region={region}"
     try:
         response = requests.get(api_url)
