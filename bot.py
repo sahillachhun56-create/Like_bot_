@@ -25,7 +25,7 @@ bot = telebot.TeleBot(API_TOKEN)
 ADMIN_ID = 8380823727
 YOUR_UPI_ID = "orthodontist@airtel"
 YOUR_NAME = "Ariful Islam Khan"
-QR_CODE_URL = "1000020892.jpg"
+QR_CODE_URL = "https://i.postimg.cc/fL70RzQD/IMG-20261003-114641-767.jpg"
 
 bot_active = True
 
