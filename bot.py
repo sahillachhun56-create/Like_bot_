@@ -479,8 +479,9 @@ def handle_like(message):
 
     sent_msg = bot.reply_to(message, "⏳ Processing your request...", parse_mode='HTML')
     api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&server_name={region}"
-    try:
-        response = requests.get(api_url)
+        try:
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        response = requests.get(api_url, headers=headers)
         data = response.json()
 
         name = str(data.get('PlayerNickname') or data.get('name') or 'Unknown')
@@ -491,34 +492,39 @@ def handle_like(message):
 
         if int(likes_after) > int(likes_before) or int(likes_given) > 0:
             reply_text = (
-                "🎉 <b>LIKE SUCCESSFUL!</b> 👈\n"
-                "_________________________\n"
+                f"🎉 <b>LIKE SUCCESSFUL!</b> 👈\n"
+                f"_________________________\n"
                 f"👑 <b>Name :</b> {name}\n"
                 f"🎮 <b>UID :</b> {uid}\n"
                 f"🌍 <b>Region :</b> {region.upper()}\n"
-                "_________________________\n"
+                f"_________________________\n"
                 f"❤️ <b>Likes Before :</b> {likes_before}\n"
                 f"💙 <b>Likes Given :</b> {likes_given}\n"
                 f"💚 <b>Likes After :</b> {likes_after}\n"
-                f"⚡ <b>Remaining :</b> {remaining}\n"
+                f"⚡ <b>Remaining Requests :</b> {remaining}\n"
+                f"_________________________\n"
+                f"👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>\n"
+                f"🚀 <b>OWNER :</b> @Momshad_00"
             )
         else:
             reply_text = (
-                "⚠️ <b>LIMIT REACHED!</b>\n"
-                "_________________________\n"
-                f"👑 <b>Name :</b> {name}\n"
-                f"🎮 <b>UID :</b> {uid}\n"
-                f"🌍 <b>Region :</b> {region.upper()}\n"
-                "_________________________\n"
-                f"❤️ <b>Likes Before :</b> {likes_before}\n"
-                f"💙 <b>Likes Given :</b> {likes_given}\n"
-                f"💚 <b>Likes After :</b> {likes_after}\n"
-                f"⚡ <b>Remaining :</b> {remaining}\n"
+                f"⚠️ <b>DAILY LIMIT REACHED!</b>\n"
+                f"_________________________\n"
+                f"👤 <b>NAME :</b> {name}\n"
+                f"🆔 <b>UID :</b> {uid}\n"
+                f"🌍 <b>SERVER :</b> {region.upper()}\n"
+                f"_________________________\n"
+                f"📊 <b>STATUS :</b> {likes_given} Likes Added\n"
+                f"✏️ <b>REASON :</b> Daily Max Limit Reached\n"
+                f"_________________________\n"
+                f"👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>\n"
+                f"🚀 <b>OWNER :</b> @Momshad_00"
             )
     except Exception as e:
         reply_text = f"❌ <b>API Error:</b> Could not process request."
 
-    bot.reply_to(message, reply_text, parse_mode='HTML')
+    bot.edit_message_text(reply_text, chat_id=sent_msg.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
+
 
 
 
