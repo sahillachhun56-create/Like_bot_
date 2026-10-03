@@ -480,44 +480,45 @@ def handle_like(message):
     sent_msg = bot.reply_to(message, "⏳ Processing your request...", parse_mode='HTML')
     
         api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&region={region}"
-    try:
-        response = requests.get(api_url)
-        data = response.json()
+try:
+    response = requests.get(api_url)
+    data = response.json()
 
-        name = str(data.get('PlayerNickname', 'Unknown'))
-        likes_before = str(data.get('LikesBefore', '0'))
-        likes_given = str(data.get('LikesGiven', '0'))
-        likes_after = str(data.get('LikesAfter', '0'))
-        remaining = str(data.get('Remaining', '0'))
+    name = str(data.get('PlayerNickname', 'Unknown'))
+    likes_before = str(data.get('LikesBefore', '0'))
+    likes_given = str(data.get('LikesGiven', '0'))
+    likes_after = str(data.get('LikesAfter', '0'))
+    remaining = str(data.get('Remaining', '0'))
 
-        if int(likes_after) > int(likes_before):
-            reply_text = (
-                "🎉 <b>LIKE SUCCESSFUL!</b> 👈\n"
-                "_________________________\n"
-                f"👑 <b>Name :</b> {name}\n"
-                f"🎮 <b>UID :</b> {uid}\n"
-                f"🌍 <b>Region :</b> {region.upper()}\n"
-                "_________________________\n"
-                f"❤️ <b>Likes Before :</b> {likes_before}\n"
-                f"💙 <b>Likes Given :</b> {likes_given}\n"
-                f"💚 <b>Likes After :</b> {likes_after}\n"
-                f"⚡ <b>Remaining :</b> {remaining}\n"
-            )
-        else:
-            reply_text = (
-                "⚠️ <b>LIMIT REACHED!</b>\n"
-                "_________________________\n"
-                f"👑 <b>Name :</b> {name}\n"
-                f"🎮 <b>UID :</b> {uid}\n"
-                f"🌍 <b>Region :</b> {region.upper()}\n"
-                "_________________________\n"
-                f"❤️ <b>Likes Before :</b> {likes_before}\n"
-                f"💙 <b>Likes Given :</b> {likes_given}\n"
-                f"💚 <b>Likes After :</b> {likes_after}\n"
-                f"⚡ <b>Remaining :</b> {remaining}\n"
-            )
-    except Exception as e:
-        reply_text = f"❌ <b>API Error:</b> Could not process request."
+    if int(likes_after) > int(likes_before):
+        reply_text = (
+            "🎉 <b>LIKE SUCCESSFUL!</b> 👈\n"
+            "_________________________\n"
+            f"👑 <b>Name :</b> {name}\n"
+            f"🎮 <b>UID :</b> {uid}\n"
+            f"🌍 <b>Region :</b> {region.upper()}\n"
+            "_________________________\n"
+            f"❤️ <b>Likes Before :</b> {likes_before}\n"
+            f"💙 <b>Likes Given :</b> {likes_given}\n"
+            f"💚 <b>Likes After :</b> {likes_after}\n"
+            f"⚡ <b>Remaining :</b> {remaining}\n"
+        )
+    else:
+        reply_text = (
+            "⚠️ <b>LIMIT REACHED!</b>\n"
+            "_________________________\n"
+            f"👑 <b>Name :</b> {name}\n"
+            f"🎮 <b>UID :</b> {uid}\n"
+            f"🌍 <b>Region :</b> {region.upper()}\n"
+            "_________________________\n"
+            f"❤️ <b>Likes Before :</b> {likes_before}\n"
+            f"💙 <b>Likes Given :</b> {likes_given}\n"
+            f"💚 <b>Likes After :</b> {likes_after}\n"
+            f"⚡ <b>Remaining :</b> {remaining}\n"
+        )
+except Exception as e:
+    reply_text = f"❌ <b>API Error:</b> Could not process request."
+
 
     bot.edit_message_text(
         reply_text,
