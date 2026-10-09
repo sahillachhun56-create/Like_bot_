@@ -477,7 +477,14 @@ def handle_like(message):
         bot.reply_to(message, "❌ Invalid UID! Only numbers allowed.")
         return
 
+    try:
         sent_msg = bot.reply_to(message, "⏳ Sending likes, please wait...")
+    except Exception:
+        try:
+            sent_msg = bot.send_message(message.chat.id, "⏳ Sending likes, please wait...")
+        except Exception:
+            return
+
     api_url = f"https://api-bot-va1f.onrender.com/like?region={region}&uid={uid}"
     
     try:
@@ -525,8 +532,11 @@ def handle_like(message):
         bot.edit_message_text(reply_text, chat_id=message.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
 
     except Exception as e:
-        bot.edit_message_text(f"❌ <b>Error:</b> {str(e)}", chat_id=message.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
-        
+        try:
+            bot.edit_message_text(f"❌ <b>Error:</b> {str(e)}", chat_id=message.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
+        except:
+            bot.send_message(message.chat.id, f"❌ <b>Error:</b> {str(e)}", parse_mode='HTML')
+            
 
 if __name__ == '__main__':
     run()
