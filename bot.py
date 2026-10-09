@@ -477,7 +477,7 @@ def handle_like(message):
         bot.reply_to(message, "❌ Invalid UID! Only numbers allowed.")
         return
 
-        sent_msg = bot.reply_to(message, "⏳ Sending likes, please wait...")    
+        sent_msg = bot.reply_to(message, "⏳ Sending likes, please wait...")
     api_url = f"https://api-bot-va1f.onrender.com/like?region={region}&uid={uid}"
     
     try:
