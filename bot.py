@@ -477,50 +477,56 @@ def handle_like(message):
         bot.reply_to(message, "❌ Invalid UID! Only numbers allowed.")
         return
 
-    sent_msg = bot.reply_to(message, "⏳ Processing your request...", parse_mode='HTML')
-    api_url = f"https://api-bot-va1f.onrender.com/like?uid={uid}&server_name={server_name}"
+        sent_msg = bot.reply_to(message, "⏳ Sending likes, please wait...")    
+    api_url = f"https://api-bot-va1f.onrender.com/like?region={region}&uid={uid}"
+    
     try:
         headers = {'User-Agent': 'Mozilla/5.0'}
-        response = requests.get(api_url, headers=headers)
+        response = requests.get(api_url, headers=headers, timeout=20)
         data = response.json()
 
-        name = str(data.get('PlayerNickname', 'Unknown'))
-        likes_before = str(data.get('LikesbeforeCommand', '0'))
-        likes_given = str(data.get('LikesGivenByAPI', '0'))
-        likes_after = str(data.get('LikesafterCommand', '0'))
-        remaining = str(data.get('Remaining_requests', '0'))
+        name = str(data.get('PlayerNickname', data.get('nickname', 'Player Name')))
+        likes_before = str(data.get('likes_before', '0'))
+        likes_given = str(data.get('likes_given', '0'))
+        likes_after = str(data.get('likes_after', '0'))
+        remaining = str(data.get('remaining', '0'))
 
-        if int(likes_after) > int(likes_before) or int(likes_given) > 0:
-            reply_text = f"""🎉 <b>LIKE SUCCESSFUL</b> 👍
-──────────────────
-👑 <b>Name :</b> {name}
-🎮 <b>UID :</b> {uid}
-🌍 <b>Region :</b> {region.upper()}
-──────────────────
-❤️ <b>Likes Before :</b> {likes_before}
-💙 <b>Likes Given :</b> {likes_given}
-💚 <b>Likes After :</b> {likes_after}
-⚡ <b>Remaining Requests :</b> {remaining}
-──────────────────
-👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>
-🚀 <b>OWNER :</b> @Momshad_00"""
+        if int(likes_after) > int(likes_before):
+            reply_text = (
+                f"🎉 <b>LIKE SENT SUCCESSFULLY!</b>\n"
+                f"----------------------------------------\n"
+                f"👑 <b>Name :</b> {name}\n"
+                f"🎮 <b>UID :</b> {uid}\n"
+                f"🌍 <b>Region :</b> {region.upper()}\n"
+                f"----------------------------------------\n"
+                f"❤️ <b>Likes Before :</b> {likes_before}\n"
+                f"💙 <b>Likes Given :</b> {likes_given}\n"
+                f"💚 <b>Likes After :</b> {likes_after}\n"
+                f"⚡ <b>Remaining Requests :</b> {remaining}\n"
+                f"----------------------------------------\n"
+                f"👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>\n"
+                f"🚀 <b>OWNER :</b> @Momshad_00"
+            )
         else:
-            reply_text = f"""⚠️ <b>DAILY LIMIT REACHED</b>
-──────────────────
-👤 <b>NAME :</b> {name}
-🆔 <b>UID :</b> {uid}
-🌍 <b>SERVER :</b> {region.upper()}
-──────────────────
-📊 <b>STATUS :</b> 0 Likes Added
-✏️ <b>REASON :</b> Daily Max Limit Reached
-──────────────────
-👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>
-🚀 <b>OWNER :</b> @Momshad_00"""
+            reply_text = (
+                f"⚠️ <b>DAILY LIMIT REACHED / FAILED</b>\n"
+                f"----------------------------------------\n"
+                f"👤 <b>NAME :</b> {name}\n"
+                f"ID <b>UID :</b> {uid}\n"
+                f"🌍 <b>SERVER :</b> {region.upper()}\n"
+                f"----------------------------------------\n"
+                f"📊 <b>STATUS :</b> 0 Likes Added\n"
+                f"✏️ <b>REASON :</b> Daily Max Limit Reached or Failed\n"
+                f"----------------------------------------\n"
+                f"👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>\n"
+                f"🚀 <b>OWNER :</b> @Momshad_00"
+            )
 
-        bot.edit_message_text(reply_text, chat_id=sent_msg.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
+        bot.edit_message_text(reply_text, chat_id=message.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
 
     except Exception as e:
-        bot.edit_message_text(f"❌ <b>API Error:</b> {str(e)}", chat_id=sent_msg.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
+        bot.edit_message_text(f"❌ <b>Error:</b> {str(e)}", chat_id=message.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
+        
 
 if __name__ == '__main__':
     run()
