@@ -517,7 +517,7 @@ def handle_like(message):
             )
         else:
             reply_text = (
-                f"⚠️ <b>DAILY LIMIT REACHED / FAILED</b>\n"
+                f"⚠️ <b>DAILY LIMIT REACHED / </b>\n"
                 f"----------------------------------------\n"
                 f"👤 <b>NAME :</b> {name}\n"
                 f"ID <b>UID :</b> {uid}\n"
