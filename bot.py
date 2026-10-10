@@ -501,22 +501,30 @@ def handle_like(message):
 
         if int(likes_after) > int(likes_before):
             reply_text = (
-                f"🎉 <b>LIKE SENT SUCCESSFULLY!</b>\n"
-                f"----------------------------------------\n"
-                f"👑 <b>Name :</b> {name}\n"
-                f"🎮 <b>UID :</b> {uid}\n"
-                f"🌍 <b>Region :</b> {region.upper()}\n"
-                f"----------------------------------------\n"
-                f"❤️ <b>Likes Before :</b> {likes_before}\n"
-                f"💙 <b>Likes Given :</b> {likes_given}\n"
-                f"💚 <b>Likes After :</b> {likes_after}\n"
-                f"⚡ <b>Remaining Requests :</b> {remaining}\n"
-                f"----------------------------------------\n"
-                f"👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>\n"
-                f"🚀 <b>OWNER :</b> @Momshad_00"
-            )
-        
-            )
+            ──────────────────
+            👑 <b>Name :</b> {name}
+            🎮 <b>UID :</b> {uid}
+            🌍 <b>Region :</b> {region.upper()}
+             ──────────────────
+            ❤️ <b>Likes Before :</b> {likes_before}
+            💙 <b>Likes Given :</b> {likes_given}
+            💚 <b>Likes After :</b> {likes_after}
+            ⚡ <b>Remaining Requests :</b> {remaining}
+             ──────────────────
+            👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>
+            🚀 <b>OWNER :</b> @Momshad_00"""
+        else:
+            reply_text = f"""⚠️ <b>DAILY LIMIT REACHED</b>
+            ──────────────────
+           👤 <b>NAME :</b> {name}
+           🆔 <b>UID :</b> {uid}
+           🌍 <b>SERVER :</b> {region.upper()}
+            ──────────────────
+           📊 <b>STATUS :</b> 0 Likes Added
+           ✏️ <b>REASON :</b> Daily Max Limit Reached
+            ──────────────────
+           👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>
+           🚀 <b>OWNER :</b> @Momshad_00"""
 
         bot.edit_message_text(reply_text, chat_id=message.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
 
