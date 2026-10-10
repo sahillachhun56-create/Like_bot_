@@ -500,8 +500,7 @@ def handle_like(message):
         remaining = str(data.get('remaining', '0'))
 
         if int(likes_after) > int(likes_before):
-    reply_text = f"""
------------------------------------
+            reply_text = f"""-----------------------------------
 👑 <b>Name :</b> {name}
 🎮 <b>UID :</b> {uid}
 🌍 <b>Region :</b> {region.upper()}
@@ -514,8 +513,8 @@ def handle_like(message):
 👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>
 🚀 <b>OWNER :</b> @Momshad_00"""
 
-else:
-    reply_text = f"""⚠️ <b>DAILY LIMIT REACHED / FAILED</b>
+    else:
+        reply_text = f"""⚠️ <b>DAILY LIMIT REACHED / FAILED</b>
 -----------------------------------
 👤 <b>NAME :</b> {name}
 🆔 <b>UID :</b> {uid}
@@ -534,6 +533,7 @@ except Exception as e:
         bot.edit_message_text(f"❌ <b>Error:</b> {str(e)}", chat_id=message.chat.id, message_id=sent_msg.message_id, parse_mode="HTML")
     except:
         bot.send_message(message.chat.id, f"❌ <b>Error:</b> {str(e)}", parse_mode="HTML")
+        
     
 if __name__ == '__main__':
     run()
