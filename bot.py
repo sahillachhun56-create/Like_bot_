@@ -512,9 +512,8 @@ def handle_like(message):
 -----------------------------------
 👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>
 🚀 <b>OWNER :</b> @Momshad_00"""
-
-    else:
-        reply_text = f"""⚠️ <b>DAILY LIMIT REACHED / FAILED</b>
+else:
+      reply_text = f"""⚠️ <b>DAILY LIMIT REACHED / FAILED</b>
 -----------------------------------
 👤 <b>NAME :</b> {name}
 🆔 <b>UID :</b> {uid}
