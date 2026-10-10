@@ -485,7 +485,8 @@ def handle_like(message):
         except Exception:
             return
 
-    api_url = f"https://api-bot-va1f.onrender.com/like?region={region}&uid={uid}"
+    api_url = f"https://like-apii-one.vercel.app/like?uid={uid}&server_name={region}"
+    
     
     try:
         headers = {'User-Agent': 'Mozilla/5.0'}
