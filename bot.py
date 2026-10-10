@@ -515,19 +515,7 @@ def handle_like(message):
                 f"👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>\n"
                 f"🚀 <b>OWNER :</b> @Momshad_00"
             )
-        else:
-            reply_text = (
-                f"⚠️ <b>DAILY LIMIT REACHED / </b>\n"
-                f"----------------------------------------\n"
-                f"👤 <b>NAME :</b> {name}\n"
-                f"ID <b>UID :</b> {uid}\n"
-                f"🌍 <b>SERVER :</b> {region.upper()}\n"
-                f"----------------------------------------\n"
-                f"📊 <b>STATUS :</b> 0 Likes Added\n"
-                f"✏️ <b>REASON :</b> Daily Max Limit Reached or Failed\n"
-                f"----------------------------------------\n"
-                f"👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>\n"
-                f"🚀 <b>OWNER :</b> @Momshad_00"
+        
             )
 
         bot.edit_message_text(reply_text, chat_id=message.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
