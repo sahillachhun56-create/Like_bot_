@@ -500,41 +500,41 @@ def handle_like(message):
         remaining = str(data.get('remaining', '0'))
 
         if int(likes_after) > int(likes_before):
-            reply_text = (
-            ──────────────────
-            👑 <b>Name :</b> {name}
-            🎮 <b>UID :</b> {uid}
-            🌍 <b>Region :</b> {region.upper()}
-             ──────────────────
-            ❤️ <b>Likes Before :</b> {likes_before}
-            💙 <b>Likes Given :</b> {likes_given}
-            💚 <b>Likes After :</b> {likes_after}
-            ⚡ <b>Remaining Requests :</b> {remaining}
-             ──────────────────
-            👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>
-            🚀 <b>OWNER :</b> @Momshad_00"""
-        else:
-            reply_text = f"""⚠️ <b>DAILY LIMIT REACHED</b>
-            ──────────────────
-           👤 <b>NAME :</b> {name}
-           🆔 <b>UID :</b> {uid}
-           🌍 <b>SERVER :</b> {region.upper()}
-            ──────────────────
-           📊 <b>STATUS :</b> 0 Likes Added
-           ✏️ <b>REASON :</b> Daily Max Limit Reached
-            ──────────────────
-           👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>
-           🚀 <b>OWNER :</b> @Momshad_00"""
+    reply_text = f"""
+-----------------------------------
+👑 <b>Name :</b> {name}
+🎮 <b>UID :</b> {uid}
+🌍 <b>Region :</b> {region.upper()}
+-----------------------------------
+❤️ <b>Likes Before :</b> {likes_before}
+💙 <b>Likes Given :</b> {likes_given}
+💚 <b>Likes After :</b> {likes_after}
+⚡ <b>Remaining Requests :</b> {remaining}
+-----------------------------------
+👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>
+🚀 <b>OWNER :</b> @Momshad_00"""
 
-        bot.edit_message_text(reply_text, chat_id=message.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
+else:
+    reply_text = f"""⚠️ <b>DAILY LIMIT REACHED / FAILED</b>
+-----------------------------------
+👤 <b>NAME :</b> {name}
+🆔 <b>UID :</b> {uid}
+🌍 <b>SERVER :</b> {region.upper()}
+-----------------------------------
+📊 <b>STATUS :</b> 0 Likes Added
+✏️ <b>REASON :</b> Daily Max Limit Reached or Failed
+-----------------------------------
+👑 <b>ADMIN ID :</b> <code>{ADMIN_ID}</code>
+🚀 <b>OWNER :</b> @Momshad_00"""
 
-    except Exception as e:
-        try:
-            bot.edit_message_text(f"❌ <b>Error:</b> {str(e)}", chat_id=message.chat.id, message_id=sent_msg.message_id, parse_mode='HTML')
-        except:
-            bot.send_message(message.chat.id, f"❌ <b>Error:</b> {str(e)}", parse_mode='HTML')
-            
+    bot.edit_message_text(reply_text, chat_id=message.chat.id, message_id=sent_msg.message_id, parse_mode="HTML")
 
+except Exception as e:
+    try:
+        bot.edit_message_text(f"❌ <b>Error:</b> {str(e)}", chat_id=message.chat.id, message_id=sent_msg.message_id, parse_mode="HTML")
+    except:
+        bot.send_message(message.chat.id, f"❌ <b>Error:</b> {str(e)}", parse_mode="HTML")
+    
 if __name__ == '__main__':
     run()
     bot.infinity_polling(skip_pending=True)
