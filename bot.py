@@ -23,8 +23,8 @@ API_TOKEN = "8591551561:AAEY8lEj4DmYf_2WNHmTNgku7-dbUMTguV0"  # Your Bot Token
 bot = telebot.TeleBot(API_TOKEN)
 
 ADMIN_ID = 8380823727
-YOUR_UPI_ID = "orthodontist@airtel"
-YOUR_NAME = "Ariful Islam Khan"
+YOUR_UPI_ID = "islam-momshad.khan@fam"
+YOUR_NAME = "Khairul Islam"
 QR_CODE_URL = "https://i.postimg.cc/fL70RzQD/IMG-20261003-114641-767.jpg"
 
 bot_active = True
@@ -197,7 +197,7 @@ def callback_query(call):
 
     elif call.data == "paid_likes":
         markup = InlineKeyboardMarkup(row_width=1)
-        btn_sample = InlineKeyboardButton("📦 220 Likes - ₹10", callback_data="buy_package_10")
+        btn_sample = InlineKeyboardButton("📦 220 Likes - ₹20", callback_data="buy_package_20")
         btn_back = InlineKeyboardButton("« Back", callback_data="shop_menu")
         markup.add(btn_sample, btn_back)
 
@@ -212,8 +212,8 @@ def callback_query(call):
         except Exception:
             pass
 
-    elif call.data == "buy_package_10":
-        package_price = 10.0
+    elif call.data == "buy_package_20":
+        package_price = 20.0
         item_name = "220 Likes Package"
         if balance >= package_price:
             update_user_balance(user.id, -package_price)
