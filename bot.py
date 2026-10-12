@@ -25,7 +25,7 @@ bot = telebot.TeleBot(API_TOKEN)
 ADMIN_ID = 8380823727
 YOUR_UPI_ID = "islam-momshad.khan@fam"
 YOUR_NAME = "Khairul Islam"
-QR_CODE_URL = "https://i.postimg.cc/fL70RzQD/IMG-20261003-114641-767.jpg"
+QR_CODE_URL = "https://pictureurl.com/api/storage/file?key=u%2Fanon%2Fa6ddf230-9f36-4303-9465-b6aaae6dcc68-1000023243.jpg"
 
 bot_active = True
 
